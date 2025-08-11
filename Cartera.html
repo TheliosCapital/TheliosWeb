@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thelios Capital – Cartera</title>
+
+  <link rel="icon" href="assets/logo%20theklios%20capital.png" sizes="32x32" />
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2"></script>
+
+  
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="/">
+        <img src="assets/logo theklios capital.png" alt="Logo de Thelios Capital">
+      </a>
+      </div>
+        <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="vision.html">Visión</a></li>
+        <li><a href="Cartera.html">Cartera</a></li>
+        <li><a href="Tesis.html">Tesis de Inversión</a></li>
+        <li><a href="Sobre-nosotros.html">Sobre nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    </header>
+
+  <main id="main" class="main">
+    <!-- ====== RENTABILIDAD HISTÓRICA (PRIMERA SECCIÓN) ====== -->
+    <section id="rentabilidad" class="block">
+      <h2>Rentabilidad acumulada</h2>
+      <p class="lead">Evolución porcentual de la estrategia de inversión desde su inicio.</p>
+      <div class="chart-box">
+        <canvas id="rentChart"></canvas>
+      </div>
+      <div class="chart-controls">
+        <button class="btn-range" data-range="1M" aria-pressed="false">1M</button>
+        <button class="btn-range" data-range="2M" aria-pressed="false">2M</button>
+        <button class="btn-range" data-range="1Y" aria-pressed="false">1A</button>
+        <button class="btn-range" data-range="ALL" aria-pressed="true">Todo</button>
+      </div>
+
+      <div id="performance-summary" class="performance-summary"></div>
+    </section>
+
+<!-- ====== TOP 10 POSICIONES ====== -->
+<section id="top-posiciones" class="full-bleed-bg">
+  <div class="block">
+    <h2>Top 10 Posiciones</h2>
+    <p class="lead">Principales participaciones de la cartera ordenadas por su peso actual. Las cifras se actualizan automáticamente desde la hoja de cálculo.</p>
+
+    <div class="table-wrapper">
+      <table class="compact">
+        <thead>
+          <tr>
+            <th>Acciones</th>
+            <th>Precio medio(€)</th>
+            <th>Precio actual(€)</th>
+            <th>Rentabilidad</th>
+            <th>Importe actual(€)</th>
+            <th>Peso de la cartera</th>
+          </tr>
+        </thead>
+        <tbody id="positionsTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+    <!-- ====== OPERACIONES RECIENTES ====== -->
+    <section id="operaciones" class="block">
+      <h2>Operaciones recientes</h2>
+      <p class="lead">Compras y ventas ejecutadas recientemente. Útil para seguir la rotación de la cartera.</p>
+
+      <div class="table-wrapper">
+        <table class="compact">
+          <thead>
+            <tr>
+              <th>Acciones</th>
+              <th>Tipo de operación</th>
+              <th>Día de compra</th>
+              <th>Nº de acciones</th>
+              <th>Precio(€)</th>
+              <th>Importe(€)</th>
+               <th class="num">Peso inicial</th>
+            </tr>
+          </thead>
+          <tbody id="operationsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+<footer>
+  <strong>Disclaimer</strong></p>
+   El contenido de esta web tiene únicamente fines informativos y refleja opiniones personales basadas en el análisis y el criterio del autor. En ningún caso constituye una recomendación de inversión, asesoramiento financiero, fiscal o legal.
+        El autor no está registrado como asesor financiero y no acepta ninguna responsabilidad por decisiones tomadas por terceros basadas en el contenido publicado en esta web.</p>
+    &copy; 2025 Thelios Capital. Todos los derechos reservados.
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // 1) Parámetros de tu Google Sheet
+  const SHEET_ID = '1mJMuejXNGFAIReoRyWnBG6_lf3w3ffk2cfKwvElO0R8';
+  const GID      = '1490352179';
+
+  // 2) URL (puedes ampliar el rango cuando quieras)
+  const opsUrl =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}` +
+    `/gviz/tq?gid=${GID}&range=A1:G10&tqx=out:json`;
+
+  // 3) Petición y parsing
+  fetch(opsUrl)
+    .then(res => res.text())
+    .then(txt => {
+      const m = txt.match(/setResponse\(([\s\S]*)\)/);
+      if (!m) throw new Error('No se ha detectado la envoltura setResponse');
+      const table = JSON.parse(m[1]).table;
+
+      // Cabeceras y filas
+      const headers = table.cols.map(c => c.label);
+      const rows = table.rows.map(r => {
+        const obj = {};
+        r.c.forEach((cell, i) => {
+          obj[headers[i]] = cell ? (cell.v ?? cell.f) : '';
+        });
+        return obj;
+      });
+
+      /* ===== Helpers de formato ===== */
+      const nf2 = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const pf1 = new Intl.NumberFormat('es-ES', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      const isNum = v => v !== '' && v !== null && v !== undefined && !isNaN(v);
+
+      function fmtNum(v){
+        return isNum(v) ? nf2.format(+v) : null;
+      }
+      // Detecta si ya viene como string "%". Si es número 0.1 → 10 %
+      function fmtPct(v){
+        if (v === '' || v === null || v === undefined) return null;
+        if (typeof v === 'string' && v.includes('%')) return v; // ya formateado
+        if (!isNum(v)) return null;
+        return pf1.format(+v); // asume 0.1449 -> 14,5 %
+      }
+      function fmtDate(v){
+        if (v == null || v === '') return null;
+        if (typeof v === 'string' && v.startsWith('Date(')){
+          const [y,m,d] = v.match(/\d+/g).map(Number);
+          const dd = String(d).padStart(2,'0');
+          const mm = String(m+1).padStart(2,'0');
+          return `${dd}/${mm}/${y}`;
+        }
+        if (v instanceof Date){
+          const dd = String(v.getDate()).padStart(2,'0');
+          const mm = String(v.getMonth()+1).padStart(2,'0');
+          const yy = v.getFullYear();
+          return `${dd}/${mm}/${yy}`;
+        }
+        return v; // fallback
+      }
+
+      /* ===== Volcamos en la tabla ===== */
+      const tbody = document.getElementById('operationsTable');
+      tbody.innerHTML = '';
+
+      rows.forEach(r => {
+        const td = (text, cls='', isEmpty=false) =>
+          `<td class="${cls} ${isEmpty?'empty':''}">${isEmpty ? '—' : text}</td>`;
+
+        const ticker   = r.Acciones || '—';
+        const tipo     = r['Tipo de operación'] || '—';
+        const fechaRaw = r['Dia de compra'];
+        const fecha    = fmtDate(fechaRaw) ?? '—';
+
+        const numAcc   = fmtNum(r['Num de acciones'] ?? r['Nº de acciones']);
+        const precio   = fmtNum(r.Precio);
+        const importe  = fmtNum(r.Importe);
+        const pesoIni  = fmtPct(r['Peso inicial']);
+
+        const tr = `
+          <tr>
+            ${td(ticker)}
+            ${td(tipo)}
+            ${td(fecha)}
+            ${td(numAcc ?? '', 'num', !numAcc)}
+            ${td(precio  ?? '', 'num', !precio)}
+            ${td(importe ?? '', 'num', !importe)}
+            ${td(pesoIni ?? '', 'num', !pesoIni)}
+          </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', tr);
+      });
+    })
+    .catch(err => console.error('Error cargando tabla de operaciones:', err));
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const SHEET_ID = '1mJMuejXNGFAIReoRyWnBG6_lf3w3ffk2cfKwvElO0R8';
+  const POS_GID  = '241949333';
+
+  const posUrl =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}` +
+    `/gviz/tq?gid=${POS_GID}&range=A:F&tqx=out:json`; // sin límite de filas
+
+  fetch(posUrl)
+    .then(res => res.text())
+    .then(txt => {
+      const m = txt.match(/setResponse\(([\s\S]*)\)/);
+      if (!m) throw new Error('No se detectó JSONP de Posiciones');
+      const table = JSON.parse(m[1]).table;
+
+      const headers = table.cols.map(c => c.label);
+
+      const rows = table.rows.map(r => {
+        const o = {};
+        r.c.forEach((cell, i) => {
+          // usa f si existe, si no v.
+          o[headers[i]] = cell ? (cell.f ?? cell.v ?? '') : '';
+        });
+        return o;
+      });
+
+      /* ===== Helpers robustos ===== */
+      const nf2 = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const pf2 = new Intl.NumberFormat('es-ES', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Convierte “1.234,56”, “1234,56”, “1,23%”, 0.123 etc. a número
+      function toNum(val){
+        if (val === '' || val === null || val === undefined) return null;
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string'){
+          const clean = val.replace(/\s/g,'').replace('%','').replace(/\./g,'').replace(',', '.');
+          const n = Number(clean);
+          return isNaN(n) ? null : n;
+        }
+        return null;
+      }
+
+      function fmtNum(val){
+        const n = toNum(val);
+        return n === null ? null : nf2.format(n);
+      }
+      function fmtPct(val){
+        // Si ya viene con % en string, devuélvelo tal cual
+        if (typeof val === 'string' && val.includes('%')) return val;
+        const n = toNum(val);
+        return n === null ? null : pf2.format(n);
+      }
+
+      const tbody = document.getElementById('positionsTable');
+      tbody.innerHTML = '';
+
+      rows.forEach(r => {
+        const td = (text, cls='', empty=false) =>
+          `<td class="${cls} ${empty?'empty':''}">${empty ? '—' : text}</td>`;
+
+        const ticker   = r.Acciones || '—';
+        const pMedio   = fmtNum(r['Precio medio de'] ?? r['Precio medio']);
+        const pActual  = fmtNum(r['Precio actual']);
+        const rentab   = fmtPct(r.Rentabilidad);
+        const importe  = fmtNum(r['Importe actual']);
+        const peso     = fmtPct(r['Peso de la cartera'] ?? r['Peso inicial']);
+
+        const tr = `
+          <tr>
+            ${td(ticker)}
+            ${td(pMedio  ?? '', 'num', !pMedio)}
+            ${td(pActual ?? '', 'num', !pActual)}
+            ${td(rentab  ?? '', 'num', !rentab)}
+            ${td(importe ?? '', 'num', !importe)}
+            ${td(peso    ?? '', 'num', !peso)}
+          </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', tr);
+      });
+    })
+    .catch(err => console.error('Error cargando Posiciones:', err));
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Config hoja de Google Sheets ---
+  const SHEET_ID = '1mJMuejXNGFAIReoRyWnBG6_lf3w3ffk2cfKwvElO0R8';
+  const RENT_GID = '774300888';
+  const rentUrl  =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}` +
+    `/gviz/tq?gid=${RENT_GID}&range=A:D&tqx=out:json`;
+
+  // Registrar plugin de zoom si está disponible
+  try {
+    if (window['chartjs-plugin-zoom']) {
+      Chart.register(window['chartjs-plugin-zoom']);
+    }
+  } catch (_) {}
+
+  // Línea horizontal en 0%
+  const zeroLinePlugin = {
+    id: 'zeroLine',
+    afterDatasetsDraw(chart, _, opts) {
+      const { ctx, chartArea, scales: { y } } = chart;
+      const y0 = y.getPixelForValue(0);
+      if (y0 < chartArea.top || y0 > chartArea.bottom) return;
+      ctx.save();
+      ctx.strokeStyle = (opts && opts.color) || '#333333';
+      ctx.lineWidth   = (opts && opts.width) || 3;
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left,  y0);
+      ctx.lineTo(chartArea.right, y0);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+  Chart.register(zeroLinePlugin);
+
+  // --- Utilidades de fechas ---
+  const parseGVizDate = (v) => {
+    if (typeof v === 'string' && v.startsWith('Date(')) {
+      const [y,m,d] = v.match(/\d+/g).map(Number);
+      return new Date(y, m, d || 1);
+    }
+    if (typeof v === 'string') {
+      const m1 = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (m1) return new Date(+m1[3], +m1[2]-1, +m1[1]);
+      const m2 = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (m2) return new Date(+m2[1], +m2[2]-1, +m2[3]);
+    }
+    const d = new Date(v);
+    return isNaN(d) ? null : d;
+  };
+  const fmtLabel = (d) => {
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    return `${dd}/${mm}/${d.getFullYear()}`;
+  };
+
+  // --- Estado global ---
+  const STATE = { rows: [], maxDate: null, chart: null };
+
+  // --- Cargar datos ---
+  fetch(rentUrl)
+    .then(res => res.text())
+    .then(txt => {
+      const m = txt.match(/setResponse\(([\s\S]*)\)/);
+      if (!m) throw new Error('No JSONP de rentabilidad');
+      const table = JSON.parse(m[1]).table;
+
+      // Parse y normalización
+      const rows = table.rows.map(r => {
+        const c0 = r.c[0];
+        const rawDate = c0 ? (c0.v ?? c0.f) : '';
+        const dateObj = parseGVizDate(rawDate);
+        const label   = c0?.f || (dateObj ? fmtLabel(dateObj) : '');
+        const mVal    = (parseFloat(r.c[2]?.v ?? r.c[2]?.f ?? 0) || 0) * 100;
+        const pVal    = (parseFloat(r.c[3]?.v ?? r.c[3]?.f ?? 0) || 0) * 100;
+        return { date: dateObj, label, m:+mVal.toFixed(2), p:+pVal.toFixed(2) };
+      }).filter(r => r.date);
+
+      // Orden ASC (antiguo → reciente)
+      rows.sort((a,b) => a.date - b.date);
+      STATE.rows    = rows;
+      STATE.maxDate = rows[rows.length - 1]?.date || null;
+
+      // --- Crear gráfica (sin reverse en X) ---
+      const ctx = document.getElementById('rentChart').getContext('2d');
+      STATE.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: rows.map(r => r.label),
+          datasets: [
+            { label:'THELIOS',   data: rows.map(r => r.m), borderColor:'#314e5c', backgroundColor:'rgba(144,183,212,0.2)', fill:true, tension:0.3 },
+            { label:'MSCI ACWI', data: rows.map(r => r.p), borderColor:'#B99841', backgroundColor:'rgba(51,51,51,0.1)',   fill:true, tension:0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { title: { display: true, text: 'Fecha' } },
+            y: { title: { display: true, text: 'Rentabilidad (%)' }, ticks: { callback: v => v + '%' } }
+          },
+          plugins: {
+            tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}%` } },
+            zeroLine: { color: '#333333', width: 3 },
+            zoom: {
+              limits: { x: { min: 'original', max: 'original' }, y: { min: 'original', max: 'original' } },
+              pan:   { enabled: true, mode: 'x', modifierKey: 'ctrl' },
+              zoom:  {
+                mode: 'x',
+                drag: { enabled: true, backgroundColor:'rgba(0,0,0,0.08)', borderColor:'rgba(0,0,0,0.2)', borderWidth:1 },
+                wheel: { enabled: false }
+              },
+              // mantener el resumen sincronizado con zoom/pan
+              onZoomComplete: () => updateSummaryFromChart(),
+              onPanComplete:  () => updateSummaryFromChart()
+            }
+          }
+        }
+      });
+
+      // ===== Resumen (muestra SIEMPRE el último punto visible) =====
+      const renderSummary = (mVal, pVal) => {
+        const perf = document.getElementById('performance-summary');
+        if (!perf) return;
+        const fm = (v) => (v ?? 0).toFixed(2) + '%';
+        perf.innerHTML = `
+          <table class="summary-table">
+            <tbody>
+              <tr><td class="label"><span class="dot dot-m"></span>THELIOS</td><td>${fm(+mVal)}</td></tr>
+              <tr><td class="label"><span class="dot dot-p"></span>MSCI ACWI</td><td>${fm(+pVal)}</td></tr>
+            </tbody>
+          </table>
+        `;
+      };
+
+      const updateSummaryFromChart = () => {
+        const ch = STATE?.chart;
+        if (!ch) return;
+        const labels = ch.data.labels || [];
+        if (!labels.length) return;
+        // Escala de categoría: max es índice visible más alto
+        const maxIdx = Math.min(labels.length - 1,
+                                Math.floor(typeof ch.scales?.x?.max === 'number'
+                                  ? ch.scales.x.max
+                                  : labels.length - 1));
+        const i = Math.max(0, maxIdx);
+        const mLast = ch.data.datasets[0]?.data?.[i];
+        const pLast = ch.data.datasets[1]?.data?.[i];
+        renderSummary(mLast, pLast);
+      };
+
+      // ===== Filtros de rango: SIEMPRE tramo más reciente =====
+      const applyRange = (key) => {
+        if (!STATE.rows.length) return;
+
+        const rows = STATE.rows; // ASC
+        const base = STATE.maxDate || rows[rows.length - 1].date;
+        const DAYS = { '1M': 31, '2M': 62, '1Y': 366 };
+
+        let startIdx = 0; // Todo
+        if (key in DAYS) {
+          const sinceTs = +base - DAYS[key] * 24 * 60 * 60 * 1000;
+          const idx = rows.findIndex(r => r.date && +r.date >= sinceTs);
+          startIdx = (idx === -1) ? 0 : idx;
+        }
+
+        const sliced = rows.slice(startIdx); // tramo final
+        STATE.chart.data.labels           = sliced.map(r => r.label);
+        STATE.chart.data.datasets[0].data = sliced.map(r => r.m);
+        STATE.chart.data.datasets[1].data = sliced.map(r => r.p);
+        STATE.chart.resetZoom();
+        STATE.chart.update();
+
+        // Resumen con el último punto del tramo
+        const last = sliced[sliced.length - 1];
+        if (last) renderSummary(last.m, last.p);
+      };
+
+      // Botones de rango + marcado accesible
+      const rangeButtons = document.querySelectorAll('.btn-range[data-range]');
+      rangeButtons.forEach(btn => {
+        btn.addEventListener('click', e => {
+          const r = e.currentTarget.dataset.range;
+          applyRange(r);
+
+          rangeButtons.forEach(b => {
+            const on = b === e.currentTarget;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+
+          STATE.chart?.resetZoom();
+        });
+      });
+
+      // Inicial: Todo + resumen global
+      document.querySelector('.btn-range[data-range="ALL"]')?.classList.add('is-active');
+      applyRange('ALL');
+
+      // ---- Doble click / doble tap => mostrar TODO el historial ----
+const setActiveButton = (range) => {
+  document.querySelectorAll('.btn-range[data-range]').forEach(b => {
+    const on = b.dataset.range === range;
+    b.classList.toggle('is-active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+};
+
+const showAll = () => {
+  applyRange('ALL');           // carga todo el dataset
+  STATE.chart?.resetZoom();    // quita zoom/pan
+  setActiveButton('ALL');      // marca el botón "Todo"
+};
+
+const canvas = STATE.chart?.canvas || document.getElementById('rentChart');
+
+// doble click (desktop)
+canvas.addEventListener('dblclick', (e) => {
+  e.preventDefault();
+  showAll();
+});
+
+// doble tap (móvil)
+let lastTap = 0;
+canvas.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTap < 300) {   // dos toques en <300ms
+    e.preventDefault();
+    showAll();
+  }
+  lastTap = now;
+});
+
+    })
+    .catch(err => console.error('Error cargando rentabilidad:', err));
+});
+
+</script>
+
+
+
+
+
+<script>
+  // Registrar el plugin de zoom para Chart.js
+  const zoomPlugin = window['chartjs-plugin-zoom'];
+  Chart.register(zoomPlugin);
+</script>
+
+ <style>
+    /* borde contenedor de la gráfica, por si no quieres tocar style.css */
+    .chart-box{border:1px solid #ddd;border-radius:8px;padding:1rem 1.25rem;margin:0 auto 2.5rem;box-shadow:0 1px 2px rgba(0,0,0,.05);background:#fff;max-width:1200px;height:560px;}
+    .gray-section{background:#f2f2f2 !important;padding:2.5rem 1.5rem;border-radius:8px;}
+  </style>
+
+</body>
+</html>

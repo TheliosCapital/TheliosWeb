@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- PON ESTO LO PRIMERO EN <head> (tras el <meta>), antes de tailwind y style.css -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thelios Capital</title>
+
+  <link rel="icon" 
+        type="image/png" 
+        sizes="32x32" 
+        href="assets\logo theklios capital.png">
+
+        <script>
+    tailwind.config = {
+      corePlugins: {
+        preflight: false
+      }
+    }
+  </script>
+
+ <script src="https://cdn.tailwindcss.com"></script>
+ <link rel="stylesheet" href="style.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root { --font-family: 'Josefin Sans', sans-serif; }
+  html, body { font-family: var(--font-family); }
+</style>
+ 
+ </head>
+
+
+<body>
+  <header>
+    <div class="logo">
+      <a href="/">
+        <img src="assets/logo theklios capital.png" alt="Logo de Thelios Capital">
+      </a>
+      </div>
+        <nav>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="vision.html">Visión</a></li>
+        <li><a href="Cartera.html">Cartera</a></li>
+        <li><a href="Tesis.html">Tesis de Inversión</a></li>
+        <li><a href="Sobre-nosotros.html">Sobre nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    </header>
+
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>THELIOS CAPITAL</h1>
+      <p class="intro">Lo importante no es encontrar muchas ideas, sino entender bien unas pocas</p>
+    </div>
+  </section>
+
+  <!-- Nueva sección: Qué hacemos -->
+  <section class="about">
+    <div class="container">
+      <h2>¿Qué es Thelios Capital?</h2>
+      <p>Esta plataforma nace como un proyecto personal para construir, paso a paso, mi <strong>track record</strong> como inversor. Aquí documento cada inversión realizada en mi cuenta personal, explico el análisis detrás de cada decisión y muestro con transparencia cómo evoluciona la cartera en el tiempo.</p>
+Todo el proceso de selección lo hago con un software propio que desarrollé para filtrar oportunidades, analizar empresas y construir una cartera optimizada con un algoritmo que busca el mejor equilibrio entre rentabilidad, riesgo y valoración. No es solo una lista de acciones: es una forma de pensar, invertir y mejorar constantemente.
+</p>
+    </div>
+  </section>
+
+  <!-- Sección Rentabilidad con fondo gris claro -->
+<section id="rentabilidad-index" class="bg-gray-100 py-12">
+  <!-- Este container tiene max-width + centrado horizontal -->
+  <div class="container mx-auto px-4">
+    <h2 style="margin-bottom:2rem; color:var(--color-principal); font-size:2rem;"> Rentabilidad acumulada</h2>
+    <p class="lead mb-6">Evolución porcentual de la estrategia de inversión desde su inicio.</p>
+
+    <!-- Aquí: max-w-4xl (o el que prefieras), centrado con mx-auto -->
+    <div class="chart-box bg-white p-6 rounded-lg shadow-sm mx-auto max-w-4xl">
+      <!-- Asegúrate de que el canvas ocupe ancho completo -->
+       <canvas id="rentChart" class="w-full h-96"></canvas>
+    </div>
+
+    <div id="performance-summary" class="performance-summary mt-6"></div>
+  </div>
+</section>
+
+<!-- Sección Tesis con fondo blanco -->
+<section id="tesis" class="productos">
+  <h2 style="margin-bottom:2rem; color:var(--color-principal); font-size:2rem;">
+    Tesis de Inversión
+  </h2>
+  <div class="grid-productos">
+    <!-- Tarjeta 1 -->
+    <div class="tarjeta">
+      <img src="assets/GettyImages-2183848501.jpg" alt="Empresa 1" />
+      <div>
+        <h3>Empresa 1</h3>
+        <p>Breve descripción de por qué invertimos en Empresa 1, su ventaja competitiva y proyección a futuro.</p>
+        <!-- Solo aquí cambiamos el href -->
+        <a href="tesis.html?empresa=empresa1" target="_blank" rel="noopener">
+          Leer más
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2 -->
+    <div class="tarjeta">
+      <img src="assets/jp-morgan.5-810x524.jpg" alt="Empresa 2" />
+      <div>
+        <h3>Empresa 2</h3>
+        <p>Resumen de nuestra evaluación y puntos clave de inversión.</p>
+        <a href="tesis.html?empresa=empresa2" target="_blank" rel="noopener">
+          Leer más
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3 -->
+    <div class="tarjeta">
+      <img src="assets/modal_trade_in__k5xx81wg61ei_large.jpg" alt="Empresa 3" />
+      <div>
+        <h3>Empresa 3</h3>
+        <p>Descripción de la tesis y visión de crecimiento.</p>
+        <a href="tesis.html?empresa=empresa3" target="_blank" rel="noopener">
+          Leer más
+        </a>
+      </div>
+    </div>
+
+    <!-- Añade más tarjetas exactamente igual -->
+  </div>
+</section>
+
+<!-- ——— Sección de Preguntas Frecuentes ——— -->
+<section id="faq" class="productos">
+  <div class="container">
+    <h2>Notas del Gestor</h2>
+
+    <details>
+      <summary>Invertir es decidir a pesar de la incertidumbre</summary>
+      <div class="answer">
+        <p>
+          Una de las primeras lecciones que interioricé es que nunca vas a tener toda la información. La inversión es un acto de decisión en condiciones de incompletitud constante. Quien espera certezas antes de invertir, simplemente no invierte. O, peor aún, invierte cuando el mercado ya ha descontado todo lo bueno, y el margen de seguridad ha desaparecido.
+        </p>
+        <p>clave está en asumir que toda tesis tiene lagunas. Lo importante es que los fundamentos conocidos sean lo suficientemente sólidos y el precio suficientemente atractivo como para que la incertidumbre residual no amenace el capital. Es decir, acepto operar con una “incertidumbre razonable”.
+        <p>
+        Esto requiere humildad. No se trata de buscar la perfección analítica, sino de construir convicción con lo que tienes, siempre dejando espacio para que la realidad te contradiga. Mi marco de análisis intenta reducir el rango de lo incierto, no eliminarlo. Porque si esperas a tenerlo todo claro, llegas tarde.</p>
+        </p>
+      </div>
+    </details>
+
+    <details>
+      <summary>¿Cómo gestiono el miedo a equivocarme?</summary>
+      <div class="answer">
+        <p>
+          Invertir con dinero real conlleva una carga emocional fuerte. No es lo mismo tener razón en papel que poner tu nombre detrás de una operación. Y ese miedo —a equivocarte, a quedar en evidencia, a perder dinero— puede paralizar, desviar tu atención o llevarte a tomar decisiones impulsivas.
+        </p>
+        <p>La manera en que lo gestiono es doble: por un lado, con proceso, y por otro, con perspectiva. El proceso me protege de actuar por impulso. Tener criterios definidos, umbrales cuantitativos y un marco repetible ayuda a que la decisión no dependa de un momento emocional. No se trata de eliminar el miedo, sino de que no tome el volante.
+        </p>La perspectiva, por otro lado, me recuerda que un error no es un fracaso si se tomó con método. Hay inversiones que saldrán mal simplemente porque el mundo no es predecible. Lo importante es que esa decisión haya sido coherente con mis principios y mi proceso. Así convierto cada error en aprendizaje y no en culpa.</p>
+</p>
+      </div>
+    </details>
+
+     <details>
+      <summary>Rentabilidad vs Riesgo</summary>
+      <div class="answer">
+        <p>
+          Es tentador juzgar una inversión solo por la rentabilidad que ofrece. Pero la experiencia te enseña que el retorno, por sí solo, no es un buen indicador de calidad. Lo relevante es cómo se obtiene ese retorno y a qué coste en riesgo.</p>
+<p> Thelios Capital, no busco rentabilidades espectaculares si vienen asociadas a desequilibrios financieros, modelos insostenibles o narrativa excesiva. Prefiero una rentabilidad razonable con alta visibilidad y bajo riesgo de pérdida permanente de capital. No me interesa el beneficio volátil, sino el beneficio resiliente.</p>
+Además, evalúo cada posición no solo por su rentabilidad esperada, sino por su asimetría: cuánto puedo ganar si acierto frente a cuánto puedo perder si me equivoco. Mi objetivo es construir una cartera que esté diseñada no solo para crecer, sino para sobrevivir a escenarios adversos.<p>
+      </div>
+    </details>
+
+         <details>
+      <summary>Invertir no es adivinar</summary>
+      <div class="answer">
+        <p>
+          Uno de los malentendidos más extendidos sobre invertir es creer que se trata de adivinar qué pasará con la economía, el mercado o los tipos de interés. Yo no intento anticipar el futuro. Intento entender lo que ya está pasando y valorar cómo de descontado está por el mercado.</p>
+<p> núcleo de mi trabajo no es prever, sino evaluar. ¿Este negocio es sólido? ¿Está bien gestionado? ¿Cotiza con un margen de seguridad frente a su valor razonable? Si las respuestas son afirmativas, actúo. No necesito saber cómo evolucionará el petróleo o si la inflación bajará medio punto más en seis meses.</p>
+Mi ventaja no está en la predicción, sino en la interpretación. En ver lo que otros miran pero no entienden bien. En detectar oportunidades que el mercado ignora porque está distraído intentando adivinar el siguiente movimiento de la Fed.
+<p>
+      </div>
+    </details>
+
+        <details>
+      <summary>Cuando una empresa buena no es una buena inversion</summary>
+      <div class="answer">
+        <p>
+          Una de las ideas más importantes que aprendí —y que no es evidente al principio— es que una empresa excelente no siempre es una buena inversión. Puede tener márgenes elevados, una marca poderosa, un equipo gestor brillante… y aún así, no ser una oportunidad atractiva.</p>
+<p>¿Por qué? Porque el precio importa. Si la empresa cotiza con expectativas demasiado altas, el margen de error desaparece. En esos casos, aunque el negocio funcione perfectamente, es probable que el retorno no compense el riesgo asumido. Es el típico caso de “empresa maravillosa, inversión mediocre”.</p>
+Mi trabajo consiste en encontrar empresas buenas que además estén mal valoradas. No busco gangas en negocios en decadencia, pero tampoco pago cualquier precio por calidad. La clave está en el equilibrio: calidad + precio razonable + margen de seguridad.
+      </div>
+    </details>
+
+    <details>
+      <summary>El corto plazo juzga resultados, el largo plazo juzga decisiones</summary>
+      <div class="answer">
+        <p>El mercado, por naturaleza, es impaciente. Valora lo inmediato, castiga lo inesperado, premia lo llamativo. En el corto plazo, una empresa puede ser aplaudida por crecer rápido, por sorprender al alza o por pertenecer al sector de moda. Pero eso no significa que sea una buena inversión.</p>
+<p>En mi forma de entender la inversión, el resultado a corto plazo es solo una fotografía parcial. Puede verse afectado por factores aleatorios: tipos de interés, expectativas del mercado, un trimestre atípico. Pero las decisiones que tomas como inversor —qué empresas eliges, por qué lo haces, a qué precio entras, cuánto tiempo planeas mantenerlas— son las que construyen la rentabilidad real en el tiempo.</p>
+<p>A veces, decisiones correctas generan resultados decepcionantes en el corto plazo. Y al revés: decisiones poco sólidas pueden dar rendimientos momentáneos por puro azar. El reto está en no dejar que ese juicio inmediato del mercado condicione tu criterio.</p>
+<p>Por eso, en Thelios Capital priorizo la coherencia del proceso sobre la aprobación del momento. Cada posición que tomo busca resistir el escrutinio del tiempo, no solo el titular del mes. Porque el mercado puede juzgarme por los resultados de hoy, pero yo me juzgo por las decisiones que puedo defender dentro de cinco años.</p>
+
+      </div>
+    </details>
+    <!-- …más detalles… -->
+  </div>
+</section>
+
+  <!-- Sección Contacto -->
+<!-- ——— Sección de Contacto Simplificada ——— -->
+<section id="contacto" class="productos">
+  <div class="container">
+    <h2>Contacto</h2>
+    <ul class="contact-list">
+      <li>
+        <!-- Icono de correo -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--color-secundario)" viewBox="0 0 24 24">
+          <path d="M1.5 4.5h21v15h-21z" fill="none"/>
+          <path d="M22.5 6.75l-10.5 7.125L1.5 6.75V18h21V6.75zM22.5 4.5h-21c-.825 0-1.5.675-1.5 1.5v.75l12 8.142L24 6.75v-.75c0-.825-.675-1.5-1.5-1.5z"/>
+        </svg>
+        <a href="mailto:tuemail@dominio.com">julio.munoz@thelioscapital.com</a>
+      </li>
+      <li>
+        <!-- Icono de LinkedIn -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--color-principal)" viewBox="0 0 24 24">
+          <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zm.02 4.5H0v16h5V8zm7 0h-5v16h5v-8.5c0-4.7 6-5.08 6 0v8.5h5v-10c0-9.33-10-8.99-11-4.4V8z"/>
+        </svg>
+        <a href="https://www.linkedin.com/in/julio-mu%C3%B1oz-trullenque-955698b7/" target="_blank" rel="noopener">LinkedIn</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+<footer>
+  <strong>Disclaimer</strong></p>
+   El contenido de esta web tiene únicamente fines informativos y refleja opiniones personales basadas en el análisis y el criterio del autor. En ningún caso constituye una recomendación de inversión, asesoramiento financiero, fiscal o legal.
+        El autor no está registrado como asesor financiero y no acepta ninguna responsabilidad por decisiones tomadas por terceros basadas en el contenido publicado en esta web.</p>
+    &copy; 2025 Thelios Capital. Todos los derechos reservados.
+  </footer>
+
+  <script src="js/grafico-rentabilidad.js" defer></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('section').forEach(sec => {
+      observer.observe(sec);
+    });
+  });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const faq = document.querySelector('#faq');
+  if (!faq) return;
+
+  const activateFaq = () => {
+    faq.classList.add('visible');
+    observer.disconnect();
+    window.removeEventListener('scroll', checkVisible);
+  };
+
+  // ---- Activación robusta del FAQ ----
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          activateFaq();
+        }
+      });
+    },
+    { threshold: 0, rootMargin: "150px" }
+  );
+  observer.observe(faq);
+
+  const checkVisible = () => {
+    const rect = faq.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom >= 0) {
+      activateFaq();
+    }
+  };
+  window.addEventListener('scroll', checkVisible);
+  checkVisible();
+
+  // ---- Animación personalizada ----
+  const allDetails = faq.querySelectorAll('details');
+
+  allDetails.forEach(detail => {
+    const summary = detail.querySelector('summary');
+    const content = detail.querySelector('.answer');
+    if (!summary || !content) return;
+
+    // Estilo inicial
+    content.style.overflow = 'hidden';
+    content.style.maxHeight = '0px';
+    content.style.opacity = '0';
+    content.style.transition = 'max-height 0.4s ease, opacity 0.4s ease';
+
+    // Controlamos el clic manualmente
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const isOpen = detail.hasAttribute('open');
+
+      // Cerrar todos
+      allDetails.forEach(d => {
+        d.removeAttribute('open');
+        const c = d.querySelector('.answer');
+        if (c) {
+          c.style.maxHeight = '0px';
+          c.style.opacity = '0';
+        }
+      });
+
+      if (!isOpen) {
+        // Abrir este
+        detail.setAttribute('open', '');
+        content.style.maxHeight = content.scrollHeight + 'px';
+        content.style.opacity = '1';
+      }
+    });
+  });
+});
+</script>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const allDetails = document.querySelectorAll('#faq details');
+    allDetails.forEach((detail) => {
+      detail.addEventListener('toggle', () => {
+        if (detail.open) {                      // si este se acaba de abrir
+          allDetails.forEach((other) => {
+            if (other !== detail) {
+              other.open = false;             // cierra los demás
+            }
+          });
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const SHEET_ID = '1mJMuejXNGFAIReoRyWnBG6_lf3w3ffk2cfKwvElO0R8';
+  const RENT_GID = '774300888';
+  const rentUrl  =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}` +
+    `/gviz/tq?gid=${RENT_GID}&range=A:D&tqx=out:json`;
+
+  fetch(rentUrl)
+    .then(res => res.text())
+    .then(txt => {
+      // parse JSONP
+      const m = txt.match(/setResponse\(([\s\S]*)\)/);
+      if (!m) throw new Error('No JSONP de rentabilidad');
+      const table = JSON.parse(m[1]).table;
+
+      // map rows para el gráfico
+      const rows = table.rows.map(r => ({
+        date: r.c[0] ? (r.c[0].f ?? r.c[0].v) : '',
+        m:    parseFloat(r.c[2]?.v ?? r.c[2]?.f ?? 0) * 100,
+        p:    parseFloat(r.c[3]?.v ?? r.c[3]?.f ?? 0) * 100
+      }));
+      const labels = rows.map(r => r.date);
+      const dataM  = rows.map(r => +r.m.toFixed(2));
+      const dataP  = rows.map(r => +r.p.toFixed(2));
+
+      // colores: THELIOS desde CSS, MSCI fijo en gris oscuro
+      const css    = getComputedStyle(document.documentElement);
+      const colorM = css.getPropertyValue('--color-secundario').trim() || '#5b8def';
+      const colorP = '#333333';
+
+      // plugin línea 0%
+      const zeroLinePlugin = {
+        id: 'zeroLine',
+        afterDatasetsDraw(chart, _, opts) {
+          const { ctx, chartArea, scales: { y } } = chart;
+          const y0 = y.getPixelForValue(0);
+          if (y0 < chartArea.top || y0 > chartArea.bottom) return;
+          ctx.save();
+          ctx.strokeStyle = opts.color || colorP;
+          ctx.lineWidth   = opts.width || 3;
+          ctx.beginPath();
+          ctx.moveTo(chartArea.left,  y0);
+          ctx.lineTo(chartArea.right, y0);
+          ctx.stroke();
+          ctx.restore();
+        }
+      };
+
+      // inicializar Chart.js
+      const ctx = document.getElementById('rentChart').getContext('2d');
+      new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'THELIOS',
+        data: dataM,
+        borderColor: '#314e5c',
+        backgroundColor: 'rgba(144,183,212,0.2)',  // opaco dorado
+        fill: true,
+        tension: 0.3
+      },
+      {
+        label: 'MSCI ACWI',
+        data: dataP,
+        borderColor: '#B99841',
+        backgroundColor: 'rgba(51,51,51,0.1)',    // opaco gris
+        fill: true,
+        tension: 0.3
+      }
+    ]
+  },
+        options: {
+         responsive: true,
+        maintainAspectRatio: false,    // ← aquí
+        interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { display: true, reverse: true, title: { display: true, text: 'Fecha' } },
+            y: { display: true, title: { display: true, text: 'Rentabilidad (%)' }, ticks: { callback: v => v + '%' } }
+          },
+          plugins: {
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}%` } },
+            zeroLine: { color: colorP, width: 3 }
+          }
+        },
+        plugins: [ zeroLinePlugin ]
+      });
+    })
+    .catch(err => console.error('Error cargando rentabilidad:', err));
+});
+</script>
+
+</body>
+</html>
