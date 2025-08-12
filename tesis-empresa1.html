@@ -58,50 +58,69 @@
     &copy; 2025 Thelios Capital. Todos los derechos reservados.
   </footer>
 
- <script>
-  // Header shrink on scroll
+<script>
+  // Encoger header
   const header = document.querySelector('header');
   window.addEventListener('scroll', () => {
     header.classList.toggle('shrink', window.scrollY > 50);
   });
 
-  // PDF URL absoluta (dominio real)
+  // URL ABSOLUTA (tu dominio)
   const url = 'https://thelioscapital.com/PDFs/Empresa1.pdf';
+  console.log('Intentando cargar PDF desde:', url);
 
-  const pdfjsLib = window['pdfjs-dist/build/pdf'];
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+  // Prueba previa: ¿responde el PDF?
+  fetch(url, { method: 'HEAD' })
+    .then(r => {
+      console.log('HEAD status:', r.status, 'content-type:', r.headers.get('content-type'));
+      if (!r.ok) throw new Error('HEAD ' + r.status);
+      return startPdfViewer();
+    })
+    .catch(err => {
+      console.error('No accesible por HEAD:', err);
+      fail(url);
+    });
 
-  pdfjsLib.getDocument(url).promise.then(pdf => {
-    const viewer = document.getElementById('pdf-viewer');
-    const renderPage = (num) => {
-      pdf.getPage(num).then(page => {
-        const unscaled = page.getViewport({ scale: 1 });
-        const containerWidth = viewer.clientWidth;
-        const scale = containerWidth / unscaled.width;
-        const viewport = page.getViewport({ scale });
+  function startPdfViewer() {
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
-        const canvas = document.createElement('canvas');
-        canvas.style.display = 'block';
-        canvas.style.margin = '1rem auto';
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
+    return pdfjsLib.getDocument(url).promise.then(pdf => {
+      const viewer = document.getElementById('pdf-viewer');
+      const renderPage = (num) => {
+        pdf.getPage(num).then(page => {
+          const unscaled = page.getViewport({ scale: 1 });
+          const containerWidth = viewer.clientWidth || 800;
+          const scale = containerWidth / unscaled.width;
+          const viewport = page.getViewport({ scale });
 
-        const ctx = canvas.getContext('2d');
-        viewer.appendChild(canvas);
+          const canvas = document.createElement('canvas');
+          canvas.style.display = 'block';
+          canvas.style.margin = '1rem auto';
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          viewer.appendChild(canvas);
 
-        page.render({ canvasContext: ctx, viewport }).promise.then(() => {
-          if (num < pdf.numPages) renderPage(num + 1);
+          const ctx = canvas.getContext('2d');
+          page.render({ canvasContext: ctx, viewport }).promise.then(() => {
+            if (num < pdf.numPages) renderPage(num + 1);
+          });
         });
-      });
-    };
-    renderPage(1);
-  }).catch(err => {
-    console.error('Error al cargar PDF:', err);
+      };
+      renderPage(1);
+    }).catch(err => {
+      console.error('PDF.js getDocument falló:', err);
+      fail(url);
+    });
+  }
+
+  function fail(u) {
     document.getElementById('pdf-viewer').innerHTML =
-      `<p>No se pudo cargar la tesis. Descarga el PDF <a href="${url}" target="_blank">aquí</a>.</p>`;
-  });
+      `<p>No se pudo cargar la tesis. Abre el PDF <a href="${u}" target="_blank" rel="noopener">aquí</a>.</p>`;
+  }
 </script>
+
 
 
 </body>
