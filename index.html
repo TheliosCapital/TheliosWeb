@@ -148,7 +148,7 @@ Todo el proceso de selección lo hago con un software propio que desarrollé par
         <p>
           Una de las primeras lecciones que interioricé es que nunca vas a tener toda la información. La inversión es un acto de decisión en condiciones de incompletitud constante. Quien espera certezas antes de invertir, simplemente no invierte. O, peor aún, invierte cuando el mercado ya ha descontado todo lo bueno, y el margen de seguridad ha desaparecido.
         </p>
-        <p>clave está en asumir que toda tesis tiene lagunas. Lo importante es que los fundamentos conocidos sean lo suficientemente sólidos y el precio suficientemente atractivo como para que la incertidumbre residual no amenace el capital. Es decir, acepto operar con una “incertidumbre razonable”.
+        <p>La clave está en asumir que toda tesis tiene lagunas. Lo importante es que los fundamentos conocidos sean lo suficientemente sólidos y el precio suficientemente atractivo como para que la incertidumbre residual no amenace el capital. Es decir, acepto operar con una “incertidumbre razonable”.
         <p>
         Esto requiere humildad. No se trata de buscar la perfección analítica, sino de construir convicción con lo que tienes, siempre dejando espacio para que la realidad te contradiga. Mi marco de análisis intenta reducir el rango de lo incierto, no eliminarlo. Porque si esperas a tenerlo todo claro, llegas tarde.</p>
         </p>
@@ -172,7 +172,7 @@ Todo el proceso de selección lo hago con un software propio que desarrollé par
       <div class="answer">
         <p>
           Es tentador juzgar una inversión solo por la rentabilidad que ofrece. Pero la experiencia te enseña que el retorno, por sí solo, no es un buen indicador de calidad. Lo relevante es cómo se obtiene ese retorno y a qué coste en riesgo.</p>
-<p> Thelios Capital, no busco rentabilidades espectaculares si vienen asociadas a desequilibrios financieros, modelos insostenibles o narrativa excesiva. Prefiero una rentabilidad razonable con alta visibilidad y bajo riesgo de pérdida permanente de capital. No me interesa el beneficio volátil, sino el beneficio resiliente.</p>
+<p>En Thelios Capital, no busco rentabilidades espectaculares si vienen asociadas a desequilibrios financieros, modelos insostenibles o narrativa excesiva. Prefiero una rentabilidad razonable con alta visibilidad y bajo riesgo de pérdida permanente de capital. No me interesa el beneficio volátil, sino el beneficio resiliente.</p>
 Además, evalúo cada posición no solo por su rentabilidad esperada, sino por su asimetría: cuánto puedo ganar si acierto frente a cuánto puedo perder si me equivoco. Mi objetivo es construir una cartera que esté diseñada no solo para crecer, sino para sobrevivir a escenarios adversos.<p>
       </div>
     </details>
@@ -182,7 +182,7 @@ Además, evalúo cada posición no solo por su rentabilidad esperada, sino por s
       <div class="answer">
         <p>
           Uno de los malentendidos más extendidos sobre invertir es creer que se trata de adivinar qué pasará con la economía, el mercado o los tipos de interés. Yo no intento anticipar el futuro. Intento entender lo que ya está pasando y valorar cómo de descontado está por el mercado.</p>
-<p> núcleo de mi trabajo no es prever, sino evaluar. ¿Este negocio es sólido? ¿Está bien gestionado? ¿Cotiza con un margen de seguridad frente a su valor razonable? Si las respuestas son afirmativas, actúo. No necesito saber cómo evolucionará el petróleo o si la inflación bajará medio punto más en seis meses.</p>
+<p>El núcleo de mi trabajo no es prever, sino evaluar. ¿Este negocio es sólido? ¿Está bien gestionado? ¿Cotiza con un margen de seguridad frente a su valor razonable? Si las respuestas son afirmativas, actúo. No necesito saber cómo evolucionará el petróleo o si la inflación bajará medio punto más en seis meses.</p>
 Mi ventaja no está en la predicción, sino en la interpretación. En ver lo que otros miran pero no entienden bien. En detectar oportunidades que el mercado ignora porque está distraído intentando adivinar el siguiente movimiento de la Fed.
 <p>
       </div>
@@ -476,7 +476,8 @@ document.addEventListener('DOMContentLoaded', () => {
         borderColor: '#314e5c',
         backgroundColor: 'rgba(144,183,212,0.2)',  // opaco dorado
         fill: true,
-        tension: 0.3
+        tension: 0.3,
+        pointRadius: 0
       },
       {
         label: 'MSCI ACWI',
@@ -484,7 +485,8 @@ document.addEventListener('DOMContentLoaded', () => {
         borderColor: '#B99841',
         backgroundColor: 'rgba(51,51,51,0.1)',    // opaco gris
         fill: true,
-        tension: 0.3
+        tension: 0.3,
+        pointRadius: 0
       }
     ]
   },
@@ -493,7 +495,9 @@ document.addEventListener('DOMContentLoaded', () => {
         maintainAspectRatio: false,    // ← aquí
         interaction: { mode: 'index', intersect: false },
           scales: {
-            x: { display: true, reverse: false, title: { display: true, text: 'Fecha' } },
+            x: { display: true, reverse: false, title: { display: true, text: 'Fecha' },grid: {
+              drawOnChartArea: false // ❌ Esto quita las líneas verticales
+            } },
             y: { display: true, title: { display: true, text: 'Rentabilidad (%)' }, ticks: { callback: v => v + '%' } }
           },
           plugins: {

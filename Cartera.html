@@ -75,8 +75,8 @@
 
     <!-- ====== OPERACIONES RECIENTES ====== -->
     <section id="operaciones" class="block">
-      <h2>Operaciones recientes</h2>
-      <p class="lead">Compras y ventas ejecutadas recientemente. Útil para seguir la rotación de la cartera.</p>
+      <h2>Operaciones realizadas</h2>
+      <p class="lead">Compras y ventas ejecutadas. Útil para seguir la rotación de la cartera.</p>
 
       <div class="table-wrapper">
         <table class="compact">
@@ -378,8 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
         data: {
           labels: rows.map(r => r.label),
           datasets: [
-            { label:'THELIOS',   data: rows.map(r => r.m), borderColor:'#314e5c', backgroundColor:'rgba(144,183,212,0.2)', fill:true, tension:0.3 },
-            { label:'MSCI ACWI', data: rows.map(r => r.p), borderColor:'#B99841', backgroundColor:'rgba(51,51,51,0.1)',   fill:true, tension:0.3 }
+            { label:'THELIOS',   data: rows.map(r => r.m), borderColor:'#314e5c', backgroundColor:'rgba(144,183,212,0.2)', fill:true, tension:0.3,pointRadius: 0,  },
+            { label:'MSCI ACWI', data: rows.map(r => r.p), borderColor:'#B99841', backgroundColor:'rgba(51,51,51,0.1)',   fill:true, tension:0.3,pointRadius: 0, }
           ]
         },
         options: {
@@ -387,7 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
           scales: {
-            x: { title: { display: true, text: 'Fecha' } },
+            x: { title: { display: true, text: 'Fecha' }, grid: {
+              drawOnChartArea: false // ❌ Esto quita las líneas verticales
+            } },
             y: { title: { display: true, text: 'Rentabilidad (%)' }, ticks: { callback: v => v + '%' } }
           },
           plugins: {
