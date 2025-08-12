@@ -65,24 +65,25 @@
   <!-- Nueva sección: Qué hacemos -->
   <section class="about">
     <div class="container">
-      <h2>¿Qué es Thelios Capital?</h2>
+      <p><h2><strong>¿Qué es Thelios Capital?</strong></h2> </p>
       <p>Esta plataforma nace como un proyecto personal para construir, paso a paso, mi <strong>track record</strong> como inversor. Aquí documento cada inversión realizada en mi cuenta personal, explico el análisis detrás de cada decisión y muestro con transparencia cómo evoluciona la cartera en el tiempo.</p>
 Todo el proceso de selección lo hago con un software propio que desarrollé para filtrar oportunidades, analizar empresas y construir una cartera optimizada con un algoritmo que busca el mejor equilibrio entre rentabilidad, riesgo y valoración. No es solo una lista de acciones: es una forma de pensar, invertir y mejorar constantemente.
 </p>
+  
     </div>
   </section>
 
   <!-- Sección Rentabilidad con fondo gris claro -->
 <section id="rentabilidad-index" class="bg-gray-100 py-12">
   <!-- Este container tiene max-width + centrado horizontal -->
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto px-4 max-w-6xl text-center">
     <h2 style="margin-bottom:2rem; color:var(--color-principal); font-size:2rem;"> Rentabilidad acumulada</h2>
     <p class="lead mb-6">Evolución porcentual de la estrategia de inversión desde su inicio.</p>
 
     <!-- Aquí: max-w-4xl (o el que prefieras), centrado con mx-auto -->
-    <div class="chart-box bg-white p-6 rounded-lg shadow-sm mx-auto max-w-4xl">
+    <div class="chart-box bg-white p-6 rounded-lg shadow-sm mx-auto max-w-6xl">
       <!-- Asegúrate de que el canvas ocupe ancho completo -->
-       <canvas id="rentChart" class="w-full h-96"></canvas>
+       <canvas id="rentChart" class="w-full h-[560px] md:h-[640px]"></canvas>
     </div>
 
     <div id="performance-summary" class="performance-summary mt-6"></div>
@@ -375,15 +376,69 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!m) throw new Error('No JSONP de rentabilidad');
       const table = JSON.parse(m[1]).table;
 
-      // map rows para el gráfico
-      const rows = table.rows.map(r => ({
-        date: r.c[0] ? (r.c[0].f ?? r.c[0].v) : '',
-        m:    parseFloat(r.c[2]?.v ?? r.c[2]?.f ?? 0) * 100,
-        p:    parseFloat(r.c[3]?.v ?? r.c[3]?.f ?? 0) * 100
-      }));
-      const labels = rows.map(r => r.date);
-      const dataM  = rows.map(r => +r.m.toFixed(2));
-      const dataP  = rows.map(r => +r.p.toFixed(2));
+      // === Leer SIEMPRE valores numéricos (.v), filtrar vacíos y ordenar ===
+      const parseGVizDate = (v) => {
+        if (typeof v === 'string' && v.startsWith('Date(')) {
+          const [y,m,d] = v.match(/\d+/g).map(Number);
+          return new Date(y, m, d || 1);
+        }
+        const d = new Date(v);
+        return isNaN(d) ? null : d;
+      };
+      const fmtLabel = (d) => {
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        return `${dd}/${mm}/${d.getFullYear()}`;
+      };
+
+      let rows = table.rows.map(r => {
+        const dCell = r.c[0], mCell = r.c[2], pCell = r.c[3];
+
+        const dateObj = dCell ? parseGVizDate(dCell.v ?? dCell.f) : null;
+        if (!dateObj) return null;
+        if (typeof mCell?.v !== 'number' || typeof pCell?.v !== 'number') return null;
+
+        return {
+          date: dateObj,
+          label: dCell?.f || fmtLabel(dateObj),
+          m: +(mCell.v * 100).toFixed(2),  // 0.7975 -> 79.75
+          p: +(pCell.v * 100).toFixed(2)
+        };
+      }).filter(Boolean);
+
+      // Ordena antiguo → reciente; el último es el más nuevo
+      rows.sort((a,b) => a.date - b.date);
+
+      const labels = rows.map(r => r.label);
+      const dataM  = rows.map(r => r.m);
+      const dataP  = rows.map(r => r.p);
+
+      // === TABLA TWR (debajo de la gráfica) ===
+      const renderSummary = (mVal, pVal) => {
+        const perf = document.getElementById('performance-summary');
+        if (!perf) return;
+        const fm = (v) => (v ?? 0).toFixed(2) + '%';
+        perf.innerHTML = `
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th class="label"></th>
+                <th class="twr">TWR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="label"><span class="dot dot-m"></span>THELIOS</td><td>${fm(+mVal)}</td></tr>
+              <tr><td class="label"><span class="dot dot-p"></span>MSCI ACWI</td><td>${fm(+pVal)}</td></tr>
+            </tbody>
+          </table>
+        `;
+      };
+
+      // Pinta el último punto REAL (por si hay filas vacías al final del Sheet)
+      const last = rows[rows.length - 1];
+      renderSummary(last?.m ?? 0, last?.p ?? 0);
+
+
 
       // colores: THELIOS desde CSS, MSCI fijo en gris oscuro
       const css    = getComputedStyle(document.documentElement);
@@ -438,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         maintainAspectRatio: false,    // ← aquí
         interaction: { mode: 'index', intersect: false },
           scales: {
-            x: { display: true, reverse: true, title: { display: true, text: 'Fecha' } },
+            x: { display: true, reverse: false, title: { display: true, text: 'Fecha' } },
             y: { display: true, title: { display: true, text: 'Rentabilidad (%)' }, ticks: { callback: v => v + '%' } }
           },
           plugins: {

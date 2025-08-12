@@ -42,12 +42,7 @@
       <div class="chart-box">
         <canvas id="rentChart"></canvas>
       </div>
-      <div class="chart-controls">
-        <button class="btn-range" data-range="1M" aria-pressed="false">1M</button>
-        <button class="btn-range" data-range="2M" aria-pressed="false">2M</button>
-        <button class="btn-range" data-range="1Y" aria-pressed="false">1A</button>
-        <button class="btn-range" data-range="ALL" aria-pressed="true">Todo</button>
-      </div>
+     
 
       <div id="performance-summary" class="performance-summary"></div>
     </section>
@@ -55,8 +50,8 @@
 <!-- ====== TOP 10 POSICIONES ====== -->
 <section id="top-posiciones" class="full-bleed-bg">
   <div class="block">
-    <h2>Top 10 Posiciones</h2>
-    <p class="lead">Principales participaciones de la cartera ordenadas por su peso actual. Las cifras se actualizan automáticamente desde la hoja de cálculo.</p>
+    <h2>Posiciones</h2>
+    <p class="lead">Principales participaciones de la cartera</p>
 
     <div class="table-wrapper">
       <table class="compact">
@@ -66,6 +61,7 @@
             <th>Precio medio(€)</th>
             <th>Precio actual(€)</th>
             <th>Rentabilidad</th>
+            <th>Importe inicial(€)</th>
             <th>Importe actual(€)</th>
             <th>Peso de la cartera</th>
           </tr>
@@ -92,7 +88,6 @@
               <th>Nº de acciones</th>
               <th>Precio(€)</th>
               <th>Importe(€)</th>
-               <th class="num">Peso inicial</th>
             </tr>
           </thead>
           <tbody id="operationsTable"></tbody>
@@ -195,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ${td(numAcc ?? '', 'num', !numAcc)}
             ${td(precio  ?? '', 'num', !precio)}
             ${td(importe ?? '', 'num', !importe)}
-            ${td(pesoIni ?? '', 'num', !pesoIni)}
           </tr>
         `;
         tbody.insertAdjacentHTML('beforeend', tr);
@@ -213,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const posUrl =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}` +
-    `/gviz/tq?gid=${POS_GID}&range=A:F&tqx=out:json`; // sin límite de filas
+    `/gviz/tq?gid=${POS_GID}&range=A:H&tqx=out:json`; // sin límite de filas
 
   fetch(posUrl)
     .then(res => res.text())
@@ -273,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rentab   = fmtPct(r.Rentabilidad);
         const importe  = fmtNum(r['Importe actual']);
         const peso     = fmtPct(r['Peso de la cartera'] ?? r['Peso inicial']);
+        const pInicial  = fmtNum(r['Importe inicial']);
 
         const tr = `
           <tr>
@@ -280,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${td(pMedio  ?? '', 'num', !pMedio)}
             ${td(pActual ?? '', 'num', !pActual)}
             ${td(rentab  ?? '', 'num', !rentab)}
+            ${td(pInicial ?? '', 'num', !pInicial)}
             ${td(importe ?? '', 'num', !importe)}
             ${td(peso    ?? '', 'num', !peso)}
           </tr>
@@ -397,18 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
           plugins: {
             tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}%` } },
             zeroLine: { color: '#333333', width: 3 },
-            zoom: {
-              limits: { x: { min: 'original', max: 'original' }, y: { min: 'original', max: 'original' } },
-              pan:   { enabled: true, mode: 'x', modifierKey: 'ctrl' },
-              zoom:  {
-                mode: 'x',
-                drag: { enabled: true, backgroundColor:'rgba(0,0,0,0.08)', borderColor:'rgba(0,0,0,0.2)', borderWidth:1 },
-                wheel: { enabled: false }
-              },
-              // mantener el resumen sincronizado con zoom/pan
-              onZoomComplete: () => updateSummaryFromChart(),
-              onPanComplete:  () => updateSummaryFromChart()
-            }
+            
           }
         }
       });
@@ -420,6 +405,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const fm = (v) => (v ?? 0).toFixed(2) + '%';
         perf.innerHTML = `
           <table class="summary-table">
+            <thead>
+              <tr>
+                <th class="label"></th>
+                <th class="twr">TWR</th>
+              </tr>
+            </thead>
             <tbody>
               <tr><td class="label"><span class="dot dot-m"></span>THELIOS</td><td>${fm(+mVal)}</td></tr>
               <tr><td class="label"><span class="dot dot-p"></span>MSCI ACWI</td><td>${fm(+pVal)}</td></tr>
@@ -427,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </table>
         `;
       };
+
 
       const updateSummaryFromChart = () => {
         const ch = STATE?.chart;

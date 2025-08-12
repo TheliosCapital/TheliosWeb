@@ -1012,7 +1012,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Banda de fondo y layout a dos columnas para el proceso */
 .page-vision .rich-band { 
-  background: #f7f8f9;         /* gris suave */
+  background: #ffffff;         /* gris suave */
   padding: 2.5rem 0;
 }
 .page-vision .rich-band::before { display: none; } /* quita divisor superior en esta banda */
@@ -1076,7 +1076,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 /* Banda suave como las secciones destacadas */
 .page-vision .soft-band { 
-  background:#f7f8f9;
+  background:#ffffff;
   padding:2.5rem 0;
 }
 .page-vision .soft-band::before { display:none; } /* quita el divisor superior en esta banda */
