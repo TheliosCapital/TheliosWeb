@@ -74,7 +74,10 @@
       pdf.getPage(num).then(page => {
         const unscaled = page.getViewport({ scale: 1 });
         const containerWidth = viewer.clientWidth;
-        const scale = containerWidth / unscaled.width;
+        
+        // 👇 Escala reducida al 80%
+        const scale = (containerWidth / unscaled.width) * 0.7;
+
         const viewport = page.getViewport({ scale });
 
         const canvas = document.createElement('canvas');
@@ -98,9 +101,6 @@
       `<p>No se pudo cargar la tesis. Descarga el PDF <a href="${url}" target="_blank">aquí</a>.</p>`;
   });
 </script>
-
-
-
 
 </body>
 </html>
