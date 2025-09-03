@@ -750,8 +750,8 @@ a:hover {
   margin:3rem auto;
   display:block}
 .table-wrapper {
-  max-height:340px;
-  overflow-y:auto;
+  max-height:none;
+  overflow-y:visible;
   border:1px solid #ddd;
   border-radius:6px;
   box-shadow:0 1px 2px rgba(0,0,0,.04);
