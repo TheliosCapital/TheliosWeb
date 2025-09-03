@@ -218,10 +218,14 @@ section:not(:first-of-type)::before {
   content:"";
   position:absolute;
   top:0;
-  left:0%;
-  width:100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%; /* o 100% del bloque */
+  max-width:1200px; /* igual que el contenedor */
   height:1px;
-  background:rgba(0,0,0,.1)}
+  background:#f5f5f5;
+}
+
 .parallax {
   background-attachment:fixed;
   background-position:center;
