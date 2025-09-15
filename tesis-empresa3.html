@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thelios Capital – Tesis de Inversión: Empresa 1</title>
+  <link rel="icon" href="../assets/logo theklios capital.png" type="image/png" sizes="32x32">
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+   <link rel="stylesheet" href="style.css">
+</head>
+
+
+
+<body>
+
+  <!-- Header / Nav idéntico al resto -->
+  <header>
+    <div class="logo">
+      <a href="../index.html"><img src="../assets/logo theklios capital.png" alt="Logo Thelios"></a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../vision.html">Visión</a></li>
+        <li><a href="../Cartera.html">Cartera</a></li>
+        <li><a href="../Tesis.html">Tesis de Inversión</a></li>
+        <li><a href="../Sobre-nosotros.html">Sobre nosotros</a></li>
+        <li><a href="../index.html#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="tesis" class="productos visible">
+    <div class="container">
+     
+      <!-- Contenedor para PDF.js -->
+      <div id="pdf-viewer" style="width:100%; max-width:1200px; margin:0 auto; padding: 0 1rem;
+                   background:#fff;">
+        <!-- Cada página del PDF se insertará aquí -->
+      </div>
+      <div style="text-align:center; margin-top:2rem;">
+        <a href="../index.html#tesis" style="background:var(--color-secundario); color:white;
+           font-weight:600; padding:0.75rem 1.5rem; border-radius:0.25rem; text-decoration:none;">
+          ← Volver a Tesis de Inversión
+        </a>
+      </div>
+    </div>
+  </section>
+
+ <footer>
+  <strong>Disclaimer</strong></p>
+   El contenido de esta web tiene únicamente fines informativos y refleja opiniones personales basadas en el análisis y el criterio del autor. En ningún caso constituye una recomendación de inversión, asesoramiento financiero, fiscal o legal.
+        El autor no está registrado como asesor financiero y no acepta ninguna responsabilidad por decisiones tomadas por terceros basadas en el contenido publicado en esta web.</p>
+    &copy; 2025 Thelios Capital. Todos los derechos reservados.
+  </footer>
+
+<script>
+  const header = document.querySelector('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('shrink', window.scrollY > 50);
+  });
+
+  const url = 'PDFs/Tesis Kanamic Network.pdf'; // Ruta relativa dentro del mismo repositorio
+
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    const viewer = document.getElementById('pdf-viewer');
+
+    const renderPage = (num) => {
+      pdf.getPage(num).then(page => {
+        // 1) Viewport base
+        const unscaled = page.getViewport({ scale: 1 });
+
+        // 2) Escala responsive * 0.8 (20% más pequeño)
+        const containerWidth = viewer.clientWidth;
+        const scale = (containerWidth / unscaled.width) * 0.7;
+
+        const viewport = page.getViewport({ scale });
+
+        // 3) Salida HiDPI (más pixeles reales para nitidez)
+        const outputScale = Math.min(window.devicePixelRatio || 1, 2); 
+        // (cap a 2 para no disparar memoria; sube a 3 si quieres aún más nitidez)
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        // Tamaño REAL del lienzo (pixeles)
+        canvas.width  = Math.floor(viewport.width  * outputScale);
+        canvas.height = Math.floor(viewport.height * outputScale);
+
+        // Tamaño VISUAL en CSS (no pixeles reales)
+        canvas.style.width  = Math.floor(viewport.width) + 'px';
+        canvas.style.height = Math.floor(viewport.height) + 'px';
+
+        canvas.style.display = 'block';
+        canvas.style.margin = '1rem auto';
+
+        viewer.appendChild(canvas);
+
+        const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+
+        page.render({
+          canvasContext: ctx,
+          viewport,
+          transform
+        }).promise.then(() => {
+          if (num < pdf.numPages) renderPage(num + 1);
+        });
+      });
+    };
+
+    renderPage(1);
+  }).catch(err => {
+    console.error('Error al cargar PDF:', err);
+    document.getElementById('pdf-viewer').innerHTML =
+      `<p>No se pudo cargar la tesis. Descarga el PDF <a href="${url}" target="_blank">aquí</a>.</p>`;
+  });
+</script>
+
+
+</body>
+</html>
