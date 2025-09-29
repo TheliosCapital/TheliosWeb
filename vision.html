@@ -13,23 +13,43 @@
   </head>
 
 <body class="page-vision">
-  <header>
-    <div class="logo">
-      <a href="index.html">
-        <img src="assets/logo theklios capital.png" alt="Logo de Thelios Capital">
-      </a>
-    </div>
-    <nav>
+<header class="tc-header">
+  <div class="tc-wrap">
+    <a class="tc-logo" href="/">
+      <img src="assets/logo theklios capital.png" alt="Thelios Capital">
+    </a>
+
+    <button class="tc-burger" aria-controls="tc-drawer" aria-expanded="false" aria-label="Abrir menú">☰</button>
+
+    <nav class="tc-navdesk" aria-label="Principal">
       <ul>
         <li><a href="index.html">Inicio</a></li>
-        <li><a href="vision.html" class="active">Visión</a></li>  <!-- Destacar activo si quieres -->
+        <li><a href="/">Visión</a></li>
         <li><a href="Cartera.html">Cartera</a></li>
         <li><a href="Tesis.html">Tesis de Inversión</a></li>
         <li><a href="Sobre-nosotros.html">Sobre nosotros</a></li>
         <li><a href="index.html#contacto">Contacto</a></li>
       </ul>
     </nav>
-  </header>
+  </div>
+
+  <!-- Drawer móvil -->
+  <div class="tc-backdrop" hidden></div>
+  <nav id="tc-drawer" class="tc-drawer" aria-label="Principal" data-state="closed">
+    <div class="tc-drawer-head">
+      <span>Navegación</span>
+      <button class="tc-close" aria-label="Cerrar">✕</button>
+    </div>
+    <ul>
+      <li><a href="/" data-close="true">Inicio</a></li>
+      <li><a href="vision.html" data-close="true">Visión</a></li>
+      <li><a href="Cartera.html" data-close="true">Cartera</a></li>
+      <li><a href="Tesis.html" data-close="true">Tesis de Inversión</a></li>
+      <li><a href="Sobre-nosotros.html" data-close="true">Sobre nosotros</a></li>
+      <li><a href="index.html#contacto" data-close="true">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
 
 <section id="vision" class="has-bg parallax">
   <div class="container">
@@ -91,7 +111,7 @@
   </div>
 </section>
 
-<section id="detalle-metodologia" class="has-bg parallax">
+<section id="detalle-metodologia-1" class="has-bg parallax">
   <div class="container text-image-section">
     <div class="text">
       <h3>Invertir con método, convicción y control del riesgo</h3>
@@ -103,7 +123,7 @@
   </div>
 </section>
 
-<section id="detalle-metodologia" class="has-bg parallax gray-section">
+<section id="detalle-metodologia-2" class="has-bg parallax gray-section"> 
   <div class="container text-image-section">
     <div class="text">
       <h3>Filosofía de inversión</h3>
@@ -127,8 +147,8 @@
       <ul class="timeline">
         <li>
           <span class="timeline-date">1</span>
-          <h4>Software propio de valoración & Watchlist</h4>
-          <p>Filtros cuantitativos y señales de calidad para generar ideas.</p>
+          <h4>Software propio de analisis</h4>
+          <p>Cribado del mercado entero para detectar las mejores oportunidades</p>
         </li>
         <li>
           <span class="timeline-date">2</span>
@@ -169,7 +189,6 @@
         <strong>Herramientas clave</strong>
         <ul>
           <li>Software propio de valoración</li>
-          <li>Algoritmo de optimización</li>
           <li>Modelo estadístico de drawdown</li>
         </ul>
       </div>
@@ -186,7 +205,7 @@
           <li>Análisis de márgenes, ROIC, crecimiento, reinversión, deuda, capital de trabajo y resiliencia</li>
           <li>Valoración mediante múltiplos comparables, análisis histórico y modelos de descuento de flujos (DCF)</li>
           <li>Evaluación de la salud financiera, calidad del negocio y sostenibilidad de la ventaja competitiva</li>
-          <li>Control del riesgo a través de drawdowns históricos, Z-score, Value at Risk (VaR), ratio de recuperación y análisis del punto de entrada</li>
+          <li>Control del riesgo a través de drawdowns históricos, Z-score, correlación con índice de volatilidad y análisis del punto de entrada</li>
         </ul>
         <p>
           Cuando detecto una posible oportunidad, me sumerjo por completo en ella. No me limito a los números: desarrollo una tesis detallada, investigo el negocio en profundidad y analizo cualitativamente los factores clave que pueden impulsar o amenazar su crecimiento. Estudio el contexto competitivo, el equipo directivo y el modelo de negocio, valorando si la empresa tiene la capacidad real de generar valor sostenido en el tiempo.
@@ -200,7 +219,7 @@
 </section>
 
 
-<section id="detalle-metodologia" class="has-bg parallax gray-section">
+<section id="detalle-metodologia-3" class="has-bg parallax gray-section">
   <div class="container text-image-section">
     <div class="text">
       <h3>¿Qué me diferencia?</h3>
@@ -241,6 +260,37 @@
   });
 </script>
 
+<script>
+  const burger = document.querySelector('.tc-burger');
+  const drawer = document.getElementById('tc-drawer');
+  const backdrop = document.querySelector('.tc-backdrop');
+  const closeBtn = drawer.querySelector('.tc-close');
+
+  function openDrawer(){
+    drawer.dataset.state = 'open';
+    backdrop.hidden = false;
+    backdrop.dataset.open = 'true';
+    burger.setAttribute('aria-expanded','true');
+    drawer.querySelector('a')?.focus();
+    document.addEventListener('keydown', escHandler);
+  }
+  function closeDrawer(){
+    drawer.dataset.state = 'closed';
+    backdrop.hidden = true;
+    backdrop.removeAttribute('data-open');
+    burger.setAttribute('aria-expanded','false');
+    document.removeEventListener('keydown', escHandler);
+  }
+  const escHandler = (e) => { if (e.key === 'Escape') closeDrawer(); };
+
+  burger.addEventListener('click', () => (drawer.dataset.state === 'open' ? closeDrawer() : openDrawer()));
+  backdrop.addEventListener('click', closeDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  // Cierra sólo si el enlace lleva data-close="true"
+  drawer.addEventListener('click', (e) => {
+    const a = e.target.closest('a'); if (a?.dataset.close === 'true') closeDrawer();
+  });
+</script>
 
 
 </body>

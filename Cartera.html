@@ -16,23 +16,43 @@
   
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <a href="/">
-        <img src="assets/logo theklios capital.png" alt="Logo de Thelios Capital">
-      </a>
-      </div>
-        <nav>
+<header class="tc-header">
+  <div class="tc-wrap">
+    <a class="tc-logo" href="/">
+      <img src="assets/logo theklios capital.png" alt="Thelios Capital">
+    </a>
+
+    <button class="tc-burger" aria-controls="tc-drawer" aria-expanded="false" aria-label="Abrir menú">☰</button>
+
+    <nav class="tc-navdesk" aria-label="Principal">
       <ul>
         <li><a href="index.html">Inicio</a></li>
         <li><a href="vision.html">Visión</a></li>
-        <li><a href="Cartera.html">Cartera</a></li>
+        <li><a href="/">Cartera</a></li>
         <li><a href="Tesis.html">Tesis de Inversión</a></li>
         <li><a href="Sobre-nosotros.html">Sobre nosotros</a></li>
         <li><a href="index.html#contacto">Contacto</a></li>
       </ul>
     </nav>
-    </header>
+  </div>
+
+  <!-- Drawer móvil -->
+  <div class="tc-backdrop" hidden></div>
+  <nav id="tc-drawer" class="tc-drawer" aria-label="Principal" data-state="closed">
+    <div class="tc-drawer-head">
+      <span>Navegación</span>
+      <button class="tc-close" aria-label="Cerrar">✕</button>
+    </div>
+    <ul>
+      <li><a href="/" data-close="true">Inicio</a></li>
+      <li><a href="vision.html" data-close="true">Visión</a></li>
+      <li><a href="Cartera.html" data-close="true">Cartera</a></li>
+      <li><a href="Tesis.html" data-close="true">Tesis de Inversión</a></li>
+      <li><a href="Sobre-nosotros.html" data-close="true">Sobre nosotros</a></li>
+      <li><a href="index.html#contacto" data-close="true">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
 
   <main id="main" class="main">
     <!-- ====== RENTABILIDAD HISTÓRICA (PRIMERA SECCIÓN) ====== -->
@@ -525,14 +545,39 @@ canvas.addEventListener('touchend', (e) => {
 </script>
 
 <script>
-  // Registrar el plugin de zoom para Chart.js
-  const zoomPlugin = window['chartjs-plugin-zoom'];
-  Chart.register(zoomPlugin);
+  const burger = document.querySelector('.tc-burger');
+  const drawer = document.getElementById('tc-drawer');
+  const backdrop = document.querySelector('.tc-backdrop');
+  const closeBtn = drawer.querySelector('.tc-close');
+
+  function openDrawer(){
+    drawer.dataset.state = 'open';
+    backdrop.hidden = false;
+    backdrop.dataset.open = 'true';
+    burger.setAttribute('aria-expanded','true');
+    drawer.querySelector('a')?.focus();
+    document.addEventListener('keydown', escHandler);
+  }
+  function closeDrawer(){
+    drawer.dataset.state = 'closed';
+    backdrop.hidden = true;
+    backdrop.removeAttribute('data-open');
+    burger.setAttribute('aria-expanded','false');
+    document.removeEventListener('keydown', escHandler);
+  }
+  const escHandler = (e) => { if (e.key === 'Escape') closeDrawer(); };
+
+  burger.addEventListener('click', () => (drawer.dataset.state === 'open' ? closeDrawer() : openDrawer()));
+  backdrop.addEventListener('click', closeDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  // Cierra sólo si el enlace lleva data-close="true"
+  drawer.addEventListener('click', (e) => {
+    const a = e.target.closest('a'); if (a?.dataset.close === 'true') closeDrawer();
+  });
 </script>
 
  <style>
     /* borde contenedor de la gráfica, por si no quieres tocar style.css */
-    .chart-box{border:1px solid #ddd;border-radius:8px;padding:1rem 1.25rem;margin:0 auto 2.5rem;box-shadow:0 1px 2px rgba(0,0,0,.05);background:#fff;max-width:1200px;height:560px;}
     .gray-section{background:#f2f2f2 !important;padding:2.5rem 1.5rem;border-radius:8px;}
   </style>
 

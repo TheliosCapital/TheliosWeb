@@ -1,7 +1,6 @@
 #cartera h2,#tesis h2,#vision h2 {
   font-size:2.5rem;
-  font-weight:700;
-  text-align:center}
+}
 *,::after,::before,html {
   box-sizing:border-box}
 #faq details[open] .answer,section.visible {
@@ -73,18 +72,13 @@
   font-size:1rem}
 #vision h2,.methodology-card h3,.text-image-section .text h3 {
   color:var(--color-principal)}
-#tesis .tesis-grid {
-  display:grid;
-  gap:1.5rem;
-  grid-template-columns:repeat(3,1fr);
-  grid-auto-rows:minmax(200px,auto)}
-#tesis .tesis-card.featured {
-  grid-row:span 2}
+
 @media (max-width:900px) {
 #tesis .tesis-grid {
-  grid-template-columns:repeat(2,1fr)}
+  grid-template-columns:repeat(3,1fr)}
 #tesis .tesis-card.featured {
-  grid-row:span 1}
+  grid-column:span 1
+  }
 }
 @media (max-width:600px) {
 #tesis .tesis-grid {
@@ -459,7 +453,7 @@ header.shrink .logo img {
   padding:4rem 0}
 .tesis-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap:1.5rem}
 .tesis-card {
   display:block;
@@ -718,8 +712,6 @@ a:hover {
 @media (max-width:768px) {
 .cartera-flex,.text-image-section {
   flex-direction:column}
-.tesis-card.featured {
-  grid-column:span 1}
 .text-image-section .image {
   margin-top:2rem}
 .hero-title {
@@ -1085,12 +1077,1554 @@ h1, h2, h3, h4, h5, h6 {
 }
 .page-vision .soft-band::before { display:none; } /* quita el divisor superior en esta banda */
 
-/* ==== FIX: compactar la destacada en Tesis ==== */
-#tesis .tesis-grid {
-  grid-auto-rows: auto !important;   /* antes: minmax(200px, auto) */
-  align-items: start;                 /* evita “estirar” las cards */
+
+
+
+
+/* ===============================
+   🔧 PATCH RESPONSIVE (añadir al final)
+   =============================== */
+
+/* 1) Tipografía fluida y contenedor cómodo */
+:root{
+  --container: 68rem;
+}
+html { font-size: 100%; } /* base clara para clamp */
+body{ font-size: clamp(0.95rem, 0.9rem + 0.4vw, 1.1rem); }
+
+/* Contenedor genérico */
+.container{
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 2rem);
 }
 
-#tesis .tesis-card.featured {
-  grid-row: auto !important;          /* antes: span 2 */
+/* 2) Header compacto en pantallas pequeñas */
+@media (max-width: 600px){
+  header{ padding: .75rem 1rem !important; }
+  .logo img{ max-height: 56px; width:auto; }
+}
+
+/* 3) Navegación móvil básica (si usas un botón de menú .burger) */
+.burger{ display:none; background:none; border:0; font-size:1.75rem; line-height:1; padding:.5rem; }
+@media (max-width: 900px){
+  .burger{ display:block; }
+  nav ul{ 
+    display:none; 
+    flex-direction:column; 
+    gap:.75rem; 
+    padding: .75rem 0;
+  }
+  nav[data-open="true"] ul{ display:flex; }
+}
+
+/* 4) Hero más legible en móvil */
+.hero{
+  padding: clamp(72px, 10vw, 120px) 0 !important;
+  text-align:center;
+}
+.hero-title{ font-size: clamp(1.8rem, 1.3rem + 2.5vw, 3rem) !important; }
+.hero-subtitle, .hero-content .intro{
+  font-size: clamp(1rem, .9rem + .6vw, 1.25rem) !important;
+}
+
+/* 5) Sección texto-imagen: quita sangría en móvil y tablet */
+.text-image-section .text{ padding-left: 8rem; }
+@media (max-width: 1024px){
+  .text-image-section .text{ padding-left: 0 !important; }
+}
+
+/* 6) Imágenes grandes con medidas fijas → fluidas */
+.perfil-image img{
+  width: 100% !important;
+  height: auto !important;
+  max-width: 800px;           /* tope razonable en desktop */
+  aspect-ratio: 5 / 2;        /* conserva proporción agradable */
+  object-fit: cover;
+  display:block;
+  margin-inline:auto;
+}
+
+/* 7) Grids y gaps más amables en móvil */
+.graph-table-container{
+  gap: 2rem;
+  padding: 1rem 1rem 2rem 1rem;
+}
+@media (min-width: 900px){
+  .graph-table-container{ gap: 3rem; padding-left: 2rem; }
+}
+
+/* 8) Tablas: scroll horizontal seguro + tipografía compacta en móvil */
+.table-wrapper{ overflow-x: auto; }
+.table-wrapper table{ min-width: 640px; }
+@media (max-width: 576px){
+  .compact{ font-size: .8rem; }
+  .rend-table td, .rend-table th{ padding: .6rem .75rem; }
+}
+
+/* 9) Parallax: desactivar en móvil (mejora rendimiento y evita “saltos”) */
+@media (max-width: 1024px){
+  .parallax{ background-attachment: scroll !important; }
+}
+
+/* 10) Cards y grids: evita “saltos” de altura y columnas demasiado estrechas */
+.tesis-card img{ height: clamp(160px, 22vw, 220px) !important; }
+
+/* 11) Botones y controles: área táctil mínima */
+.btn, .btn-range{
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* 12) Fondos a pantalla completa: aseguran legibilidad de texto */
+.hero-banner{ min-height: 30vh; }
+.hero-banner h1{ font-size: clamp(1.75rem, 1.2rem + 2.2vw, 3rem) !important; }
+
+/* 13) Dupes de :root: si hay dos paletas, prioriza esta (mismo tono) */
+:root{
+  --color-principal: #314e5c;   /* unifica */
+  --color-secundario: #90b7d4;  /* unifica */
+}
+header{ position: sticky; top:0; background:#fff; z-index:1000 }
+
+/* ----- Layout de cabecera con logo centrado ----- */
+.site-header{
+  position: sticky; top:0; z-index:1000; background:#fff; border-bottom:1px solid #eee;
+  display:grid; grid-template-columns: 44px 1fr 44px; align-items:center;
+  padding:.5rem .75rem;
+}
+.burger,
+.header-spacer{ display:flex; align-items:center; justify-content:center; }
+.burger{
+  background:none; border:0; font-size:1.6rem; line-height:1; padding:.25rem;
+  min-width:44px; min-height:44px; cursor:pointer;
+}
+.logo{ display:flex; justify-content:center; }
+.logo img{ height: clamp(36px, 4vw, 48px); width:auto; display:block }
+
+/* Nav escritorio (centrado bajo la cabecera o alineado a derecha, elige) */
+.nav-desktop ul{ display:none; }
+@media (min-width: 900px){
+  /* Si quieres el menú a la derecha, quita el grid y usa flex.
+     Si te gusta debajo, puedes colocarlo con otra sección. */
+  .nav-desktop ul{
+    display:flex; gap:1.25rem; list-style:none; margin:0; padding:0;
+    position:absolute; right:1rem; top:50%; transform:translateY(-50%);
+  }
+  .burger, .drawer, .backdrop{ display:none !important; }
+  .nav-desktop a{ text-decoration:none; color:#333; padding:.5rem 0; }
+}
+
+/* ----- Drawer móvil, más estético ----- */
+.drawer{
+  position: fixed; top:0; right:0; bottom:0; width:min(86vw, 360px);
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top-left-radius: 16px; border-bottom-left-radius: 16px;
+  box-shadow: -16px 0 32px rgba(0,0,0,.15);
+  transform: translateX(100%); transition: transform .28s ease, opacity .2s ease;
+  opacity: 0.999; /* evita glitches */
+  display:flex; flex-direction:column;
+}
+.drawer[data-state="open"]{ transform: translateX(0); }
+
+.drawer-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: .75rem 1rem; border-bottom: 1px solid rgba(0,0,0,.06);
+  font-weight:600;
+}
+.drawer-close{
+  background:none; border:0; font-size:1.4rem; padding:.25rem; cursor:pointer;
+  min-width:36px; min-height:36px;
+}
+.drawer-list{
+  list-style:none; margin:0; padding:.5rem 1rem 1rem; display:flex; flex-direction:column; gap:.25rem;
+}
+.drawer-list a{
+  display:block; padding:.85rem .5rem; border-radius:10px; text-decoration:none; color:#1c1c1c;
+  font-size:1rem; line-height:1.3;
+}
+.drawer-list a:hover{ background: rgba(0,0,0,.05); }
+
+/* Backdrop */
+.backdrop{
+  position: fixed; inset:0; background: rgba(0,0,0,.35);
+  opacity:0; pointer-events:none; transition: opacity .28s ease;
+}
+.backdrop[data-open="true"]{ opacity:1; pointer-events:auto; }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .drawer, .backdrop{ transition:none; }
+}
+/* === Header con logo centrado y menú centrado en desktop === */
+
+/* Cabecera: grid 3 columnas para centrar el logo */
+.site-header{
+  position: sticky; top:0; z-index:1000; background:#fff; border-bottom:1px solid #eee;
+  display:grid; grid-template-columns: 44px 1fr 44px; align-items:center;
+  padding:.5rem .75rem;
+}
+.logo{ display:flex; justify-content:center; }
+.logo img{ height: clamp(36px, 4vw, 48px); width:auto; }
+
+/* Móvil: drawer/hamburguesa (sin cambios) */
+@media (max-width: 899px){
+  .nav-desktop{ display:none; }
+}
+
+/* Desktop: MENÚ CENTRADO, no a la derecha */
+@media (min-width: 900px){
+  .burger, .drawer, .backdrop{ display:none !important; }  /* sólo desktop */
+
+  /* Contenedor del nav centrado dentro del header */
+  .nav-desktop{
+    position:absolute; left:50%; top:50%;
+    transform: translate(-50%, -50%); /* centrado real */
+  }
+  .nav-desktop ul{
+    display:flex; gap:1.25rem; list-style:none; margin:0; padding:0;
+  }
+  .nav-desktop a{
+    text-decoration:none; color:#333; padding:.5rem 0;
+    white-space:nowrap;
+  }
+}
+/* ===== Header Thelios (dos filas) ===== */
+.hc-header{
+  position: sticky; top:0; z-index:1000; background:#fff;
+  border-bottom:1px solid #eee;
+}
+.hc-logo{ display:flex; justify-content:center; align-items:center; padding:.65rem 1rem; }
+.hc-logo img{ height: clamp(40px, 4vw, 56px); width:auto; display:block; }
+
+/* Fila 2: barra con nav centrado */
+.hc-bar{ display:flex; align-items:center; justify-content:center; padding:.4rem 1rem; position:relative; }
+.hc-burger{
+  position:absolute; left:1rem; top:50%; transform:translateY(-50%);
+  background:none; border:0; font-size:1.6rem; line-height:1; padding:.25rem;
+  min-width:44px; min-height:44px; cursor:pointer; display:none; /* desktop hidden */
+}
+.hc-navdesk ul{
+  display:flex; gap:1.4rem; list-style:none; padding:0; margin:0;
+}
+.hc-navdesk a{ text-decoration:none; color:#333; padding:.5rem 0; white-space:nowrap; }
+
+/* ===== Mobile (<900px): drawer ===== */
+@media (max-width: 899px){
+  .hc-burger{ display:block; }
+  .hc-navdesk{ display:none; }
+
+  .hc-drawer{
+    position: fixed; top:0; right:0; bottom:0; width:min(86vw, 360px);
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-top-left-radius:16px; border-bottom-left-radius:16px;
+    box-shadow:-16px 0 32px rgba(0,0,0,.15);
+    transform:translateX(100%); transition:transform .28s ease;
+    display:flex; flex-direction:column;
+  }
+  .hc-drawer[data-state="open"]{ transform:translateX(0); }
+  .hc-drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.8rem 1rem; border-bottom:1px solid rgba(0,0,0,.06); font-weight:600;
+  }
+  .hc-close{ background:none; border:0; font-size:1.4rem; padding:.25rem; min-width:36px; min-height:36px; cursor:pointer; }
+  .hc-drawer ul{ list-style:none; margin:0; padding:.6rem 1rem 1rem; display:flex; flex-direction:column; gap:.25rem; }
+  .hc-drawer a{ display:block; padding:.85rem .5rem; border-radius:10px; text-decoration:none; color:#1c1c1c; }
+  .hc-drawer a:hover{ background:rgba(0,0,0,.05); }
+
+  .hc-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.35);
+    opacity:0; pointer-events:none; transition:opacity .28s ease;
+  }
+  .hc-backdrop[data-open="true"]{ opacity:1; pointer-events:auto; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .hc-drawer, .hc-backdrop{ transition:none; }
+}
+/* Oculta completamente el drawer y backdrop en escritorio */
+@media (min-width: 900px){
+  .hc-drawer,
+  .hc-backdrop {
+    display: none !important;
+  }
+}
+/* Barra superior perfectamente centrada */
+.hc-header{
+  position: sticky; top:0; z-index:1000; background:#fff;
+  border-bottom:1px solid #eee;
+
+  /* 👇 TRUCO: 3 columnas iguales a los lados para centrar el centro */
+  display:grid;
+  grid-template-columns: 44px 1fr 44px;   /* izq | centro | der */
+  align-items:center;
+  padding: .5rem clamp(.75rem, 2vw, 1rem);
+}
+
+.hc-burger{
+  grid-column: 3; justify-self: end;
+  background:none; border:0; font-size:1.6rem; line-height:1;
+  min-width:44px; min-height:44px; padding:.25rem; cursor:pointer;
+}
+
+/* “Espaciador” a la izquierda para equilibrar al burger */
+.hc-header::before{
+  content:""; grid-column:1; width:44px; height:1px; /* ocupa hueco simétrico */
+}
+
+.hc-logo{ grid-column:2; justify-self:center; }
+.hc-logo a{ display:flex; align-items:center; justify-content:center; }
+.hc-logo img{ display:block; height: clamp(36px, 4vw, 48px); width:auto; }
+
+/* Por si hay estilos heredados que descuadran */
+.hc-logo, .hc-logo a, .hc-logo img{ margin:0 !important; }
+
+/* =======================
+   DESKTOP HEADER FIX (≥900px)
+   ======================= */
+@media (min-width: 900px){
+  /* 1) Estructura en 2 filas: logo arriba, nav debajo */
+  .hc-header{
+    display: grid !important;
+    grid-template-rows: auto auto;     /* fila 1 = logo, fila 2 = nav */
+    grid-template-columns: 1fr;         /* una sola columna centrada */
+    row-gap: .35rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  /* 2) Logo centrado y sin rarezas */
+  .hc-logo{
+    grid-row: 1;
+    display:flex; justify-content:center; align-items:center;
+    padding: .65rem 0 !important;
+  }
+  .hc-logo img{ height: clamp(44px, 3.5vw, 56px); width:auto; }
+
+  /* 3) Barra inferior sólo para el nav (sin burger) */
+  .hc-bar{
+    grid-row: 2;
+    display:flex; justify-content:center; align-items:center;
+    position: static !important;        /* neutraliza posiciones absolutas previas */
+    transform: none !important;
+    padding: .35rem 0 !important;
+  }
+
+  /* 4) Menú centrado y en una línea */
+  .hc-burger{ display:none !important; }  /* en desktop no se muestra */
+  .hc-navdesk{ display:block !important; position: static !important; transform:none !important; }
+  .hc-navdesk ul{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center; gap: 2rem;       /* ajusta separación a tu gusto */
+    list-style:none; margin:0; padding:0;
+  }
+  .hc-navdesk a{
+    text-decoration:none; color:#333; padding:.5rem 0; white-space:nowrap;
+  }
+
+  /* 5) Ocultar por completo el drawer en desktop */
+  .hc-drawer, .hc-backdrop{ display:none !important; }
+}
+
+/* ===== DESKTOP: logo centrado arriba + menú centrado debajo ===== */
+@media (min-width: 900px){
+  /* 1) El header será una rejilla de 2 filas */
+  .hc-header{
+    display:grid !important;
+    grid-template-rows:auto auto;   /* fila 1: logo, fila 2: nav */
+    grid-template-columns:1fr;
+    row-gap:.25rem;
+    justify-items:center;           /* centra el contenido en la columna */
+  }
+
+  /* 2) LOGO: neutraliza cualquier posicionamiento previo que lo mande a la derecha */
+  .hc-logo{
+    grid-row:1;
+    position:static !important;
+    float:none !important;
+    margin:0 auto !important;
+    text-align:center !important;
+  }
+  .hc-logo a{ display:inline-flex !important; align-items:center; justify-content:center; }
+  .hc-logo img{
+    display:block;
+    height: clamp(44px, 3.5vw, 56px);
+    width:auto;
+    margin:0 auto !important;
+  }
+
+  /* 3) BARRA: sólo para centrar el nav (sin posiciones absolutas) */
+  .hc-bar{
+    grid-row:2;
+    position:static !important;
+    transform:none !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    padding:.35rem 0 !important;
+    width:100%;
+  }
+
+  /* 4) NAV desktop centrado en una línea */
+  .hc-burger{ display:none !important; }
+  .hc-navdesk{
+    display:block !important;
+    position:static !important;
+    transform:none !important;
+    float:none !important;
+  }
+  .hc-navdesk ul{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:2rem;            /* ajusta separación si quieres */
+    list-style:none; margin:0; padding:0;
+  }
+  .hc-navdesk a{ text-decoration:none; color:#333; white-space:nowrap; padding:.5rem 0; }
+
+  /* 5) Oculta completamente el drawer móvil en desktop */
+  .hc-drawer, .hc-backdrop{ display:none !important; }
+}
+
+@media (min-width: 900px){
+  .hc-header{
+    display: grid !important;
+    grid-template-rows: auto auto;
+    justify-items: center;   /* centra todos los hijos en horizontal */
+  }
+  .hc-logo, .hc-logo a, .hc-logo img{
+    position: static !important;
+    float: none !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+  }
+}
+/* ====== DESKTOP CENTRADO (logo arriba, nav debajo) ====== */
+@media (min-width: 900px){
+  /* Header = dos filas y todo centrado */
+  .hc-header{
+    width:100% !important;
+    display:grid !important;
+    grid-template-rows: auto auto;   /* fila 1: logo, fila 2: nav */
+    grid-template-columns: 1fr;       /* una sola columna */
+    justify-items:center !important;  /* centra hijos horizontal */
+    align-items:center !important;
+    padding-inline: 0 !important;     /* simétrico */
+  }
+
+  /* Fila 1: LOGO completamente centrado */
+  .hc-logo{
+    grid-row:1;
+    width:100%;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    position:static !important;
+    float:none !important;
+    margin:0 !important;
+    text-align:center !important;
+  }
+  .hc-logo a{ display:inline-flex !important; align-items:center; justify-content:center; }
+  .hc-logo img{ height: clamp(44px, 3.5vw, 56px); width:auto; display:block; }
+
+  /* Fila 2: barra sólo para el nav, sin absolutas ni transforms */
+  .hc-bar{
+    grid-row:2;
+    width:100%;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    position:static !important;
+    transform:none !important;
+    padding:.35rem 0 !important;
+  }
+
+  /* Nav centrado y en línea */
+  .hc-burger{ display:none !important; }
+  .hc-navdesk{
+    display:block !important;
+    position:static !important;
+    transform:none !important;
+    float:none !important;
+  }
+  .hc-navdesk ul{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap: 2rem;           /* ajusta separación si quieres */
+    list-style:none; margin:0 auto !important; padding:0;
+  }
+  .hc-navdesk a{ text-decoration:none; color:#333; white-space:nowrap; padding:.5rem 0; }
+
+  /* Oculta completamente el drawer en desktop */
+  .hc-drawer, .hc-backdrop{ display:none !important; }
+}
+
+/* =======================
+   DESKTOP HEADER (limpio)
+   ======================= */
+@media (min-width: 900px){
+  .hc-header{
+    background:#fff;
+    border-bottom:1px solid #eee;
+    display:grid !important;
+    grid-template-rows:auto auto;  /* fila 1 = logo, fila 2 = nav */
+    grid-template-columns:1fr;
+    justify-items:center;          /* centra horizontal */
+    align-items:center;
+    padding:0 !important;
+  }
+
+  /* Logo centrado en la primera fila */
+  .hc-logo{
+    grid-row:1;
+    margin:0 auto !important;
+    position:static !important;
+    text-align:center !important;
+  }
+  .hc-logo a{ display:inline-block; }
+  .hc-logo img{ height:56px; width:auto; display:block; margin:0 auto; }
+
+  /* Nav centrado en la segunda fila */
+  .hc-bar{
+    grid-row:2;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    position:static !important;
+    width:100%;
+    padding:.5rem 0 !important;
+  }
+
+  .hc-burger{ display:none !important; }
+  .hc-navdesk{
+    display:block !important;
+    position:static !important;
+    transform:none !important;
+  }
+  .hc-navdesk ul{
+    display:flex;
+    justify-content:center;
+    gap:2rem;
+    list-style:none; margin:0; padding:0;
+  }
+  .hc-navdesk a{ text-decoration:none; color:#333; white-space:nowrap; }
+  
+  /* Drawer móvil fuera en desktop */
+  .hc-drawer, .hc-backdrop{ display:none !important; }
+}
+
+/* Contenedor general del header */
+.hc-header{
+  position: sticky; top:0; z-index:1000; background:#fff; border-bottom:1px solid #eee;
+}
+
+/* 👇 Contenedor central que comparte logo y nav */
+.hc-wrap{
+  max-width: 1200px;            /* mismo ancho para logo y nav */
+  margin: 0 auto;
+  padding: .5rem 1rem;
+  display: grid;
+  grid-template-rows: auto auto; /* fila 1: logo, fila 2: nav */
+  row-gap: .35rem;
+}
+
+/* Fila logo */
+.hc-row-logo{ display:flex; justify-content:center; }
+.hc-logo{ display:inline-flex; align-items:center; justify-content:center; }
+.hc-logo img{ height: 56px; width:auto; display:block; }
+
+/* Fila barra/nav */
+.hc-row-bar{
+  position: relative;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Menú desktop centrado */
+.hc-navdesk ul{
+  display:flex; gap: 2rem; list-style:none; margin:0; padding:0;
+}
+.hc-navdesk a{ text-decoration:none; color:#333; white-space:nowrap; padding:.5rem 0; }
+
+/* Hamburguesa (visible en móvil, oculta en desktop) */
+.hc-burger{
+  position:absolute; left:0; top:50%; transform:translateY(-50%);
+  background:none; border:0; font-size:1.6rem; line-height:1; padding:.25rem;
+  min-width:44px; min-height:44px; cursor:pointer; display:none;
+}
+
+/* ====== Móvil (<900px): drawer ON, nav desktop OFF ====== */
+@media (max-width: 899px){
+  .hc-burger{ display:block; }
+  .hc-navdesk{ display:none; }
+
+  .hc-drawer{
+    position: fixed; top:0; right:0; bottom:0; width:min(86vw, 360px);
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top-left-radius:16px; border-bottom-left-radius:16px;
+    box-shadow:-16px 0 32px rgba(0,0,0,.15);
+    transform:translateX(100%); transition:transform .28s ease;
+    display:flex; flex-direction:column;
+  }
+  .hc-drawer[data-state="open"]{ transform:translateX(0); }
+  .hc-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:.8rem 1rem; border-bottom:1px solid rgba(0,0,0,.06); font-weight:600; }
+  .hc-close{ background:none; border:0; font-size:1.4rem; padding:.25rem; min-width:36px; min-height:36px; cursor:pointer; }
+  .hc-drawer ul{ list-style:none; margin:0; padding:.6rem 1rem 1rem; display:flex; flex-direction:column; gap:.25rem; }
+  .hc-drawer a{ display:block; padding:.85rem .5rem; border-radius:10px; text-decoration:none; color:#1c1c1c; }
+  .hc-drawer a:hover{ background:rgba(0,0,0,.05); }
+
+  .hc-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .28s ease; }
+  .hc-backdrop[data-open="true"]{ opacity:1; pointer-events:auto; }
+}
+
+/* ====== Desktop (≥900px): drawer OFF, nav ON ====== */
+@media (min-width: 900px){
+  .hc-drawer, .hc-backdrop{ display:none !important; }
+}
+/* ========== Desktop: ajustar alturas y separaciones “al pixel” ========== */
+@media (min-width: 900px){
+  /* ❗ Cambia estos valores hasta que lo veas EXACTO */
+  :root{
+    --hc-maxw: 1140px;     /* ancho del header; prueba 1120–1200 según prod */
+    --hc-logo-h: 44px;     /* altura del logo (px) */
+    --hc-gap-rows: 8px;    /* separación entre fila del logo y menú */
+    --hc-top-pad: 10px;    /* padding superior del header */
+    --hc-bot-pad: 10px;    /* padding inferior del header */
+    --hc-nav-fs: 18px;     /* tamaño de fuente del menú */
+    --hc-nav-lh: 1.2;      /* line-height del menú */
+    --hc-nav-offset: 2px;  /* pequeño “empuje” vertical del menú (+ baja / - sube) */
+    --hc-letter: 0px;      /* tracking del menú si en prod está más/menos espaciado */
+  }
+
+  .hc-wrap{
+    max-width: var(--hc-maxw) !important;
+    padding: var(--hc-top-pad) 1rem var(--hc-bot-pad) !important;
+    row-gap: var(--hc-gap-rows) !important;
+  }
+
+  .hc-logo img{
+    height: var(--hc-logo-h) !important;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .hc-row-bar{
+    /* micro-ajuste de alineación vertical del menú respecto al logo */
+    transform: translateY(var(--hc-nav-offset));
+  }
+
+  .hc-navdesk ul{
+    gap: 2rem; /* si en prod los huecos son mayores/menores, toca aquí */
+  }
+
+  .hc-navdesk a{
+    font-size: var(--hc-nav-fs);
+    line-height: var(--hc-nav-lh);
+    letter-spacing: var(--hc-letter);
+    text-decoration: none;
+    color: #333;
+    white-space: nowrap;
+    padding: .5rem 0;
+  }
+
+  /* Oculta el drawer en desktop por si acaso */
+  .hc-drawer, .hc-backdrop{ display:none !important; }
+}
+
+/* ======== Variables rápidas de ajuste ======== */
+:root{
+  --tc-maxw: 1200px;   /* ancho máximo del header */
+  --tc-pad-x: 2rem;    /* padding lateral desktop */
+  --tc-logo-h: 77px;   /* altura del logo desktop */
+  --tc-gap: 2rem;      /* separación entre enlaces desktop */
+}
+
+/* ======== Barra base ======== */
+.tc-header{ position:sticky; top:0; z-index:1000; background:#fff; border-bottom:1px solid #eee; }
+.tc-wrap{
+  max-width:var(--tc-maxw); margin:0 auto; padding:.6rem var(--tc-pad-x);
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+.tc-logo img{ height:var(--tc-logo-h); width:auto; display:block; }
+
+/* Desktop nav */
+.tc-navdesk ul{ list-style:none; display:flex; gap:var(--tc-gap); margin:0; padding:0; }
+.tc-navdesk a{ text-decoration:none; color:#333; white-space:nowrap; padding:.4rem 0; }
+
+/* Burger oculto en desktop */
+.tc-burger{ display:none; background:none; border:0; font-size:1.7rem; line-height:1; min-width:44px; min-height:44px; padding:.25rem; cursor:pointer; }
+
+/* ======== MÓVIL (<900px): logo centrado + drawer ======== */
+@media (max-width: 899px){
+  .tc-wrap{
+    padding:.6rem 1rem;
+    display:grid; grid-template-columns:44px 1fr 44px; align-items:center;
+  }
+  .tc-logo{ grid-column:2; justify-self:center; }
+  .tc-logo img{ height:40px; }
+  .tc-burger{ display:block; grid-column:3; justify-self:end; }
+  .tc-navdesk{ display:none; }
+
+  /* Drawer off-canvas */
+  .tc-drawer{
+    position:fixed; top:0; right:0; bottom:0; width:min(86vw, 360px);
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-top-left-radius:16px; border-bottom-left-radius:16px;
+    box-shadow:-16px 0 32px rgba(0,0,0,.15);
+    transform:translateX(100%); transition:transform .28s ease;
+    display:flex; flex-direction:column;
+  }
+  .tc-drawer[data-state="open"]{ transform:translateX(0); }
+  .tc-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:.8rem 1rem; border-bottom:1px solid rgba(0,0,0,.06); font-weight:600; }
+  .tc-close{ background:none; border:0; font-size:1.4rem; padding:.25rem; min-width:36px; min-height:36px; cursor:pointer; }
+  .tc-drawer ul{ list-style:none; margin:0; padding:.6rem 1rem 1rem; display:flex; flex-direction:column; gap:.25rem; }
+  .tc-drawer a{ display:block; padding:.9rem .5rem; border-radius:10px; text-decoration:none; color:#1c1c1c; }
+  .tc-drawer a:hover{ background:rgba(0,0,0,.05); }
+
+  .tc-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .28s ease; }
+  .tc-backdrop[data-open="true"]{ opacity:1; pointer-events:auto; }
+}
+
+/* ======== Desktop: oculta drawer por completo ======== */
+@media (min-width: 900px){
+  .tc-drawer, .tc-backdrop{ display:none !important; }
+}
+
+/* Let CSS control height */
+#rentChart { width: 100%; height: auto; }
+
+/* Phone: make it taller */
+@media (max-width: 767.98px) {
+  #rentChart {
+    aspect-ratio: 3 / 2;   /* was 1 / 1 → too cramped */
+    min-height: 260px;     /* safety so tiny screens aren’t squashed */
+  }
+}
+
+/* Tablet: comfortable, not too short */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  #rentChart {
+    aspect-ratio: 16 / 9;
+    min-height: 320px;
+  }
+}
+
+/* Desktop: preserve your original look */
+@media (min-width: 1024px) {
+  #rentChart {
+    aspect-ratio: 9 / 5;   /* matches your ~640px feel at common widths */
+    min-height: 640px;     /* effectively keeps desktop height the same */
+  }
+}
+
+/* Chart wrapper: responsive height via aspect-ratio */
+.chart-box{
+  border:1px solid #ddd; border-radius:8px; padding:1rem 1.25rem;
+  margin:0 auto 2.5rem; box-shadow:0 1px 2px rgba(0,0,0,.05);
+  background:#fff; max-width:1200px;
+  height:auto;               /* let CSS control height */
+  aspect-ratio: 3 / 2;       /* default (mobile-first) */
+  min-height: 260px;
+}
+
+@media (min-width: 768px){
+  .chart-box{ aspect-ratio: 16 / 9; min-height: 320px; }
+}
+@media (min-width: 1024px){
+  .chart-box{ aspect-ratio: 9 / 5; min-height: 640px; }
+}
+
+/* Canvas already set to responsive (keep these): */
+#rentChart { width: 100%; height: auto; }
+@media (max-width: 767.98px) { #rentChart { aspect-ratio: 3 / 2; min-height: 260px; } }
+@media (min-width: 768px) and (max-width: 1023.98px) { #rentChart { aspect-ratio: 16 / 9; min-height: 320px; } }
+@media (min-width: 1024px) { #rentChart { aspect-ratio: 9 / 5; min-height: 640px; } }
+
+/* --- Responsive tables: contain width + horizontal scroll only --- */
+.table-wrapper{
+  width:100%;
+  max-width:100vw;           /* never wider than the screen */
+  overflow-x:auto;           /* allow sideways scroll if needed */
+  overflow-y:visible;
+  -webkit-overflow-scrolling: touch; /* smooth iOS scroll */
+}
+
+.table-wrapper > table{
+  width:100%;
+  min-width:640px;           /* keeps columns readable */
+  border-collapse:collapse;
+}
+
+/* The section "Top posiciones" had overflow:visible; override it */
+#top-posiciones .table-wrapper{
+  overflow-x:auto;           /* was 'overflow: visible' */
+  overflow-y:visible;
+  max-width:100vw;
+}
+
+@media (max-width: 576px){
+  .compact{ font-size:.8rem; }
+  .compact th, .compact td{ padding:.45rem .6rem; }
+}
+
+/* Let the OPERACIONES table grow naturally on mobile */
+@media (max-width:576px){
+  #operaciones .table-wrapper{
+    max-height:none;         /* remove the 280px cap */
+    overflow-x:auto;         /* horizontal scroll if needed */
+    overflow-y:visible;      /* content can expand vertically */
+    max-width:100vw;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+/* Keep .block nice and even on all screens (already close) */
+.block { padding-inline: clamp(1rem, 3vw, 1.5rem); } /* reinforces existing rule */
+
+/* Center the white chart card precisely within the section */
+#rentabilidad .chart-box{
+  width: 100%;
+  max-width: 1200px;           /* same as before */
+  margin-inline: auto;         /* hard center */
+  padding: 1rem clamp(.9rem, 3.5vw, 1.25rem); /* align with .block padding on mobile */
+  border-radius: 12px;         /* cosmetic: matches the card look in your screenshot */
+}
+
+/* Ensure the canvas itself is centered within the card */
+#rentChart{
+  display: block;              /* already set globally, keep it explicit here */
+  margin-inline: auto;
+}
+
+/* Give a touch more air above/below on phones so it doesn't feel “stuck” */
+@media (max-width: 640px){
+  #rentabilidad .chart-box { margin-top: .75rem; margin-bottom: 2rem; }
+}
+/* Chart card: a bit taller + even margins on small screens */
+@media (max-width: 640px){
+  #rentabilidad .chart-box{
+    aspect-ratio: 4 / 3;     /* was 3/2 → a little taller and calmer */
+    min-height: 300px;       /* small bump for legibility */
+    margin: .75rem auto 2rem;/* tidy breathing room around the card */
+  }
+  /* keep the canvas centered and fluid */
+  #rentChart{ display:block; margin-inline:auto; }
+}
+/* Harmonize left/right padding with your .block mobile padding */
+@media (max-width: 576px){
+  #rentabilidad .chart-box{
+    padding-inline: 1rem; /* same as .block at this breakpoint */
+  }
+}
+
+/* --- Vision page responsive layout tweaks --- */
+
+/* Generic container safety */
+.page-vision .container{
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 1.5rem);
+}
+
+/* Methodology cards: 1 col on mobile, 2 on tablet, 4 on desktop */
+.methodology{
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px){
+  .methodology{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px){
+  .methodology{ grid-template-columns: repeat(4, 1fr); }
+}
+.methodology-card{
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+.methodology-card .icon{
+  width: 28px; height: 28px; display:block; margin-bottom:.5rem;
+  fill: currentColor;
+}
+
+/* Text-only sections: center and limit width for readability */
+.text-image-section .text{
+  max-width: 72ch;
+  margin-inline: auto;
+}
+
+
+/* Timeline basics (prevent overflow) */
+.timeline{
+  list-style:none; padding:0; margin:0;
+}
+.timeline li{
+  display:grid; grid-template-columns:auto 1fr;
+  gap:.75rem; padding:.75rem 0; border-bottom:1px solid rgba(0,0,0,.06);
+}
+.timeline-date{
+  display:inline-grid; place-items:center;
+  width:28px; height:28px; border-radius:999px;
+  background:#0a3340; color:#fff; font-weight:600; font-size:.9rem;
+}
+
+/* KPIs grid in sidebar */
+.kpis{ display:grid; gap:.75rem; }
+.kpi{ background:#fff; border-radius:10px; padding:.75rem 1rem; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+.kpi-value{ font-weight:700; font-size:1.25rem; }
+.kpi-label{ opacity:.75; }
+
+/* Note card in sidebar */
+.note-card{
+  background:#fff; border-radius:10px; padding:1rem; box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+
+/* Details block spans full width of the analysis grid */
+.full-text{ grid-column: 1 / -1; }
+.full-text summary{
+  cursor:pointer; padding:.75rem 1rem; background:#fff; border-radius:10px;
+  box-shadow:0 1px 2px rgba(0,0,0,.06); list-style:none; outline:none;
+}
+.full-text summary::-webkit-details-marker{ display:none; }
+.full-text .answer{
+  margin-top:.75rem; background:#fff; border-radius:10px; padding:1rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+
+/* Parallax backgrounds: disable fixed attachment on mobile to avoid jank */
+@media (max-width: 767.98px){
+  .parallax{ background-attachment: scroll !important; }
+}
+
+/* Kill any accidental horizontal scroll */
+.page-vision, .page-vision body{ overflow-x: hidden; }
+
+/* Center the hero title + intro on the Vision page (all screen sizes) */
+#vision .container { text-align: center; }
+
+#vision h2 {
+  text-align: inherit;      /* picks up the container's centering */
+  margin: 0 auto 1rem;
+  max-width: 20ch;          /* prevents overly long lines on desktop */
+}
+
+#vision p.intro {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 48ch;          /* keep paragraph comfortably readable */
+}
+
+/* Sobre nosotros: two-column layout on desktop, stacked on mobile */
+.perfil-highlight{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (min-width: 992px){
+  .perfil-highlight{
+    grid-template-columns: minmax(0, 420px) 1fr; /* image column won't overgrow */
+    gap: 2rem;
+  }
+}
+
+/* Image container: fixed aspect so we crop instead of squish */
+.perfil-image{
+  width: 100%;
+  max-width: 520px;          /* prevents upscaling a small source */
+  margin-inline: auto;
+  aspect-ratio: 4 / 5;       /* portrait feel */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,.08);
+}
+
+/* Actual img fills the box, center-cropped */
+.perfil-image img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* key: crop instead of stretch */
+  object-position: center 35%; /* nudge if the face is a bit high/low */
+  display: block;
+}
+
+/* Text column readability */
+.perfil-content{
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.perfil-content p{ margin: 0 0 1rem 0; }
+
+/* --- Sobre nosotros: layout + portrait image fix --- */
+
+/* Keep text left, image right on desktop (row-reverse already does that).
+   Reduce the huge gap so lines don't look broken. */
+#perfil-destacado .perfil-highlight{
+  display: flex;
+  flex-direction: row-reverse;   /* image on the right */
+  align-items: flex-start;
+  gap: 2rem;                      /* was 6rem */
+  margin: 3rem 0;
+}
+
+/* Make the image a portrait card, never stretched */
+#perfil-destacado .perfil-image{
+  flex: 0 0 340px;                /* fixed column width for the photo */
+  max-width: 360px;               /* guard on big screens */
+  width: 100%;
+}
+
+#perfil-destacado .perfil-image img{
+  width: 100%;
+  height: auto;                   /* stop the 400px/1000px hard sizing */
+  aspect-ratio: 4 / 5;            /* portrait shape */
+  object-fit: cover;              /* crop instead of stretch */
+  object-position: center 35%;    /* nudge if head is high/low */
+  border-radius: 10px;
+  box-shadow: 0 8px 14px rgba(0,0,0,.08);
+}
+
+/* Typography column takes the remaining space */
+#perfil-destacado .perfil-content{
+  flex: 1 1 auto;
+  min-width: 0;                   /* prevents overflow in some browsers */
+}
+
+/* Mobile & tablet: stack, center the photo, keep nice width */
+@media (max-width: 992px){
+  #perfil-destacado .perfil-highlight{
+    flex-direction: column;       /* stack */
+    gap: 1.5rem;
+  }
+  #perfil-destacado .perfil-image{
+    flex: none;
+    max-width: 420px;
+    margin-inline: auto;          /* center the portrait */
+  }
+}
+/* --- Center containers consistently across the site --- */
+:root { --container: 1200px; }  /* match the divider width */
+.container{
+  max-width: var(--container) !important;   /* unify container width */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: clamp(1rem, 3vw, 2rem);
+  padding-right: clamp(1rem, 3vw, 2rem);
+}
+
+/* The thin divider line between sections should follow the same center */
+section:not(:first-of-type)::before{
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: var(--container);              /* keep in sync with .container */
+}
+
+/* Sobre nosotros – ensure the highlight row sits centered inside the container */
+#perfil-destacado .container{
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Compact the vertical gap on the About page */
+#sobre-nosotros section {               /* use the page wrapper id if you have one; 
+                                           otherwise target the specific sections */
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+/* Pull the divider up and make it slimmer */
+#sobre-nosotros section:not(:first-of-type)::before{
+  top: 0;                 /* was lower → created extra band above the content */
+  height: 1px;            /* thinner line */
+  opacity: .5;            /* optional, a bit lighter */
+}
+
+/* If the first content block has extra space, trim it */
+#perfil-destacado { 
+  margin-top: .75rem;     /* was likely larger; adjust to taste */
+}
+
+/* Desktop stays: text left, photo right (we already use row-reverse) */
+
+/* Mobile/tablet: stack with TEXT first, PHOTO second */
+@media (max-width: 992px){
+  #perfil-destacado .perfil-highlight{
+    flex-direction: column;      /* stack */
+    gap: 1.25rem;
+  }
+  #perfil-destacado .perfil-content{ order: 1; }  /* text first */
+  #perfil-destacado .perfil-image{ order: 2; }    /* photo second */
+}
+/* About page: remove the divider after the hero + trim the gap */
+.hero-banner + section::before { content: none !important; display: none !important; }
+.hero-banner + section { padding-top: 0.75rem; } /* was larger due to global section padding */
+
+/* Sobre nosotros: compact gap under the hero */
+.hero-banner{ 
+  margin-bottom: 0.75rem !important;  /* was 4rem */
+}
+
+/* First content section after the hero (perfil-destacado) */
+.hero-banner + section{
+  padding-top: 0.75rem !important;    /* was 60px + 2rem stacking */
+}
+
+/* And ensure the About block itself doesn't add extra padding */
+#perfil-destacado{
+  padding-top: 0.75rem !important;    /* override global section padding (60px) */
+  padding-bottom: 1.25rem;            /* optional: keep some rhythm */
+}
+
+/* Center the hero title in Sobre-nosotros */
+.hero-banner .container{
+  justify-content: center;   /* horizontally center the flex row */
+  text-align: center;        /* center text for safety */
+}
+
+.hero-banner h1{
+  margin: 0 auto;            /* ensure the H1 itself is centered */
+  max-width: 20ch;           /* keeps line length elegant on desktop */
+}
+
+/* === Vision ▸ Proceso de análisis (match prod layout) === */
+
+/* Two-column grid: main + sidebar (stack on small screens) */
+#proceso-analisis .analysis-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+@media (max-width: 992px){
+  #proceso-analisis .analysis-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* KPI pills: 3 across on desktop, stack on mobile */
+#proceso-analisis .kpis{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+}
+@media (max-width: 992px){
+  #proceso-analisis .kpis{ grid-template-columns: 1fr; }
+}
+#proceso-analisis .kpi{
+  background:#fff;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+  text-align:center;
+}
+
+/* Timeline — left rail + numbered badges + stacked text */
+#proceso-analisis .timeline{
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: .25rem 0 0 0;
+}
+
+/* Vertical line (rail) */
+#proceso-analisis .timeline::before{
+  content:"";
+  position: absolute;
+  left: 27px;                 /* centers under the badges */
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #2b5260;        /* your teal-ish tone */
+  opacity: .35;
+}
+
+/* Each step: 2-column grid → [badge] [content] */
+#proceso-analisis .timeline li{
+  position: relative;
+  display: grid;
+  grid-template-columns: 54px 1fr; /* room for badge + spacing */
+  column-gap: 1rem;
+  row-gap: .25rem;
+  padding: 1rem 0;
+}
+
+/* Number badge */
+#proceso-analisis .timeline-date{
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #1e3f49;
+  color: #fff;
+  font-weight: 700;
+  font-size: .95rem;
+  margin-top: .1rem;          /* align with heading */
+  z-index: 1;
+}
+
+/* Title over description (stacked) */
+#proceso-analisis .timeline h4{
+  margin: 0 0 .3rem 0;
+  font-weight: 700;
+}
+#proceso-analisis .timeline p{
+  margin: 0;
+  opacity: .9;
+}
+
+/* Soft divider between items like prod */
+#proceso-analisis .timeline li + li{
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+/* Sidebar card */
+#proceso-analisis .note-card{
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+  padding: 1rem 1.25rem;
+}
+
+/* === Vision ▸ Proceso de análisis — fix conflicting old timeline styles === */
+#proceso-analisis .timeline{
+  /* kill legacy left padding & spacing */
+  padding-left: 0 !important;
+  margin-top: .75rem;
+  position: relative;
+}
+
+/* remove legacy absolute layout & left padding on items */
+#proceso-analisis .timeline li{
+  padding-left: 0 !important;           /* overrides .timeline-section padding-left:50px */
+  margin-bottom: 0 !important;          /* overrides old margin-bottom:2rem */
+  display: grid;
+  grid-template-columns: 54px 1fr;      /* badge | content */
+  column-gap: 1rem;
+  row-gap: .25rem;
+  align-items: start;
+}
+
+/* badge lives in first column (not absolutely positioned) */
+#proceso-analisis .timeline .timeline-date{
+  position: static !important;          /* overrides old position:absolute; left:0; top:0; */
+  display: inline-grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: #1e3f49; color: #fff;
+  font-weight: 700; font-size: .95rem;
+  margin-top: .1rem;
+  z-index: 1;
+}
+
+/* rail (vertical line) beneath the badges */
+#proceso-analisis .timeline::before{
+  content: "";
+  position: absolute;
+  left: 27px;                /* centers under the 34px badge */
+  top: 0; bottom: 0;
+  width: 3px;
+  background: #2b5260;
+  opacity: .35;
+}
+
+/* title and description stack in the second column */
+#proceso-analisis .timeline h4,
+#proceso-analisis .timeline p{
+  grid-column: 2;            /* force into content column */
+  width: auto;
+  white-space: normal;       /* avoid any weird wrapping */
+  float: none;               /* just in case */
+  margin: 0;
+}
+#proceso-analisis .timeline h4{ margin-bottom: .3rem; font-weight: 700; }
+
+/* soft divider between steps, like prod */
+#proceso-analisis .timeline li + li{
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+/* === Vision ▸ Proceso de análisis – final alignment tweaks === */
+
+/* 1) Content grid: a touch more room for the badge column */
+#proceso-analisis .timeline li{
+  grid-template-columns: 60px 1fr;  /* was 54px */
+  padding: 1.05rem 0;               /* matches prod rhythm a bit closer */
+}
+
+/* 2) Rail centered under the (34px) badge with 60px gutter */
+#proceso-analisis .timeline::before{
+  left: 30px;                        /* 60px column → center at half */
+  width: 2.5px;                      /* slightly slimmer rail */
+  opacity: .38;
+}
+
+/* 3) Badge vertical nudge so its top aligns with the h4 cap height */
+#proceso-analisis .timeline .timeline-date{
+  margin-top: .05rem;                /* was .1rem */
+  border-radius: 10px;               /* slightly rounder, like prod */
+}
+
+/* 4) Title/description spacing + weight */
+#proceso-analisis .timeline h4{
+  margin: 0 0 .25rem 0;              /* a bit tighter */
+  font-weight: 800;                  /* small emphasis bump */
+  letter-spacing: -.01em;
+}
+#proceso-analisis .timeline p{
+  margin: 0;
+  opacity: .92;                      /* a hair darker for contrast parity */
+}
+
+/* 5) Dividers: draw only under the text column, not across the badge gutter */
+#proceso-analisis .timeline li{
+  position: relative;
+}
+#proceso-analisis .timeline li::after{
+  content: "";
+  position: absolute;
+  left: 60px;                        /* start at text column */
+  right: 0;
+  bottom: -0.55rem;                  /* sits below the paragraph */
+  height: 1px;
+  background: rgba(0, 0, 0, .08);
+}
+#proceso-analisis .timeline li:last-child::after{
+  content: none;                     /* no divider after the last item */
+}
+
+/* 6) KPI pills on the right: equal height + tighter gap for a single row */
+#proceso-analisis .kpis{
+  align-items: stretch;
+  gap: .6rem;
+}
+#proceso-analisis .kpi{
+  display:flex; flex-direction:column; justify-content:center;
+  min-height: 70px;                  /* matches your screenshot vibe */
+}
+
+/* Vision ▸ Proceso de análisis: remove item divider lines */
+#proceso-analisis .timeline li + li{
+  border-top: 0 !important;
+}
+#proceso-analisis .timeline li::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* Safety: remove any stray borders inside the text column */
+#proceso-analisis .timeline h4,
+#proceso-analisis .timeline p{
+  border: 0 !important;
+}
+/* Vision ▸ Methodology cards: center the top icon */
+.methodology-card .icon{
+  display: grid;           /* reliably centers anything inside */
+  place-items: center;     /* horizontal + vertical center */
+  margin: 0 auto .75rem;   /* center the icon block itself */
+  width: 40px;             /* optional: consistent size */
+  height: 40px;
+}
+
+/* If the icon is an inline SVG, make sure it behaves like a block */
+.methodology-card .icon svg,
+.methodology-card svg.icon{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.methodology-card{ text-align: center; }
+
+/* Vision ▸ Methodology cards — center + cap icon size */
+.methodology-card { text-align: center; }
+
+.methodology-card .icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;              /* final icon size */
+  height: 56px;
+  margin: 0 auto .75rem;
+  flex: 0 0 56px;           /* don't let it grow */
+}
+
+/* Apply to both inline SVGs and img icons */
+.methodology-card .icon svg,
+.methodology-card .icon img{
+  width: 56px !important;
+  height: 56px !important;
+  max-width: 56px;
+  max-height: 56px;
+  display: block;
+}
+
+/* Safety: undo any earlier "fill the container" rules */
+.methodology-card svg.icon{ width: 56px !important; height: 56px !important; }
+
+/* === Tesis de Inversión: 3-column responsive grid === */
+
+
+/* Cards: consistent look & equal heights */
+#tesis .tesis-card{
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Cover image: stable 16:9 crop, no stretching */
+#tesis .tesis-card > img{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+/* === FIX gráfico: contenido al 100% del cuadro sin romper móvil === */
+
+/* Selector correcto según tu index.html */
+#rentabilidad-index .chart-box{
+  /* altura fluida basada en el ancho — mejor para móvil */
+  height: clamp(260px, 55vw, 560px);
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 1rem 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  background: #fff;
+
+  /* neutraliza aspect-ratio anteriores */
+  aspect-ratio: auto !important;
+}
+
+@media (max-width: 640px){
+  #rentabilidad-index .chart-box{
+    /* un poco más alta en phones estrechos */
+    height: clamp(240px, 75vw, 420px);
+    padding: .9rem;
+  }
+}
+
+@media (min-width: 1024px){
+  #rentabilidad-index .chart-box{
+    /* desktop cómodo, sin ocupar toda la pantalla */
+    height: clamp(380px, 38vw, 640px);
+  }
+}
+
+/* El canvas siempre rellena la caja (Chart.js ya tiene maintainAspectRatio:false) */
+#rentabilidad-index #rentChart{
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  /* por si quedan restos de reglas previas */
+  aspect-ratio: auto !important;
+}
+
+/* === Gráfica: versión estable móvil + desktop === */
+
+/* Caja de la gráfica */
+#rentabilidad-index .chart-box {
+  max-width: 1400px;
+  margin-inline: auto;
+  padding: 1rem 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  background: #fff;
+  aspect-ratio: auto !important; /* neutraliza reglas previas */
+}
+
+/* Canvas dentro */
+#rentabilidad-index #rentChart {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  aspect-ratio: auto !important;
+}
+
+/* Móvil (máx 768px) → altura relativa al ancho */
+@media (max-width: 768px) {
+  #rentabilidad-index .chart-box {
+    height: clamp(240px, 75vw, 420px);
+  }
+}
+
+/* Tablet / Desktop normal */
+@media (min-width: 769px) and (max-width: 1439px) {
+  #rentabilidad-index .chart-box {
+    height: 520px;   /* fijo en píxeles para que se vea grande */
+  }
+}
+
+/* Monitores grandes */
+@media (min-width: 1440px) {
+  #rentabilidad-index .chart-box {
+    height: 700px;
+  }
+}
+
+/* === Gráfica Rentabilidad ▸ Contener el canvas dentro del cuadro === */
+
+/* Caja blanca que envuelve la gráfica */
+#rentabilidad .chart-box {
+  max-width: 1400px;
+  margin-inline: auto;
+  padding: 1rem 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  background: #fff;
+
+  /* Altura controlada por CSS (no por aspect-ratio) */
+  aspect-ratio: auto !important;
+  height: clamp(240px, 55vw, 560px);
+}
+
+/* El canvas rellena la caja al 100% sin salirse */
+#rentabilidad #rentChart {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  aspect-ratio: auto !important; /* neutraliza reglas previas */
+}
+
+/* Móvil (≤768px): un poco más alto relativo al ancho */
+@media (max-width: 768px) {
+  #rentabilidad .chart-box {
+    height: clamp(260px, 75vw, 420px);
+  }
+}
+
+/* Tablet/Desktop normal */
+@media (min-width: 769px) and (max-width: 1439px) {
+  #rentabilidad .chart-box {
+    height: 520px;
+  }
+}
+
+/* Monitores grandes */
+@media (min-width: 1440px) {
+  #rentabilidad .chart-box {
+    height: 700px;
+  }
+}
+
+#faq .answer p {
+  margin-bottom: 1rem;   /* espacio entre párrafos */
+  line-height: 1.6;      /* mejora la legibilidad */
 }
