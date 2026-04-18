@@ -2624,7 +2624,190 @@ section:not(:first-of-type)::before{
   }
 }
 
+#rentabilidad .rentabilidad-panels {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto .5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+#rentabilidad .rentabilidad-panels .performance-summary {
+  flex: 0 0 auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+#rentabilidad .rentabilidad-panels .performance-summary .summary-table {
+  display: table;
+  width: auto !important;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+#rentabilidad .rentabilidad-panels .performance-summary .summary-table th {
+  text-align: center;
+  height: 3.45rem;
+  padding: 0 2rem;
+  vertical-align: middle;
+  font-size: 1rem;
+}
+
+#rentabilidad .rentabilidad-panels .performance-summary .summary-table td {
+  height: 3.45rem;
+  padding: 0 2rem;
+  vertical-align: middle;
+}
+
+#rentabilidad .statistics-summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#rentabilidad .statistics-table-frame {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+#rentabilidad .statistics-table {
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+#rentabilidad .statistics-table col {
+  width: 12.5%;
+}
+
+#rentabilidad .statistics-table th,
+#rentabilidad .statistics-table td {
+  padding: 0 .5rem;
+  text-align: center !important;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+#rentabilidad .statistics-table th {
+  background: transparent !important;
+  color: #111 !important;
+  border-bottom: 1px solid #e0e0e0;
+  height: 3.45rem;
+  white-space: normal;
+  font-size: clamp(.76rem, .85vw, .95rem);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+#rentabilidad .statistics-table td {
+  height: 3.45rem;
+  white-space: nowrap;
+  font-size: clamp(.82rem, .9vw, 1rem);
+  color: #111;
+}
+
+#rentabilidad .statistics-table td {
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+@media (max-width: 900px) {
+  #rentabilidad .rentabilidad-panels {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #rentabilidad .statistics-summary {
+    justify-content: flex-start;
+  }
+
+  #rentabilidad .statistics-table-frame {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  #rentabilidad .statistics-table {
+    display: block;
+  }
+
+  #rentabilidad .statistics-table thead {
+    display: none;
+  }
+
+  #rentabilidad .statistics-table tbody,
+  #rentabilidad .statistics-table tr {
+    display: block;
+  }
+
+  #rentabilidad .statistics-table tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #rentabilidad .statistics-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .65rem .75rem;
+    text-align: right !important;
+    white-space: normal;
+  }
+
+  #rentabilidad .statistics-table td::before {
+    content: attr(data-label);
+    color: var(--color-principal);
+    font-weight: 700;
+    text-align: left;
+  }
+}
+
 #faq .answer p {
   margin-bottom: 1rem;   /* espacio entre párrafos */
   line-height: 1.6;      /* mejora la legibilidad */
+}
+/* ==== Language switch (header) ==== */
+.tc-lang{
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+}
+
+.lang-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  text-decoration:none;
+  border:1px solid rgba(0,0,0,.12);
+  padding:.35rem .55rem;
+  border-radius:999px;
+  line-height:1;
+  transition:background .2s, border-color .2s, transform .05s;
+  background:#fff;
+}
+
+.lang-link:hover{ background:var(--gris-claro); transform:translateY(-1px); }
+
+.lang-link .flag{
+  width:20px; height:14px; display:block; border-radius:2px; box-shadow:0 0 0 1px rgba(0,0,0,.05);
+}
+
+.lang-link .lang-code{
+  font-size:.85rem; font-weight:700; color:#333;
+}
+
+/* En pantallas pequeñas, que no estorbe */
+@media (max-width: 899px){
+  .tc-lang{ display:flex; }
 }
