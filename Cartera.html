@@ -62,7 +62,10 @@
       <div class="chart-box">
         <canvas id="rentChart"></canvas>
       </div>
-      <div id="performance-summary" class="performance-summary"></div>
+      <div class="rentabilidad-panels" aria-label="Resumen de rentabilidad">
+        <div id="performance-summary" class="performance-summary"></div>
+        <div id="statistics-summary" class="statistics-summary"></div>
+      </div>
     </section>
 
 <!-- ====== TOP 10 POSICIONES ====== -->
@@ -302,6 +305,68 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     })
     .catch(err => console.error('Error cargando Posiciones:', err));
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const SHEET_ID  = '1mJMuejXNGFAIReoRyWnBG6_lf3w3ffk2cfKwvElO0R8';
+  const STATS_GID = '71159167';
+
+  const statsUrl =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}` +
+    `/gviz/tq?gid=${STATS_GID}&range=A:H&tqx=out:json`;
+
+  const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+
+  const cellText = (cell) => {
+    const value = cell ? (cell.f ?? cell.v ?? '') : '';
+    return value === '' || value === null || value === undefined ? '&mdash;' : escapeHTML(value);
+  };
+
+  fetch(statsUrl)
+    .then(res => res.text())
+    .then(txt => {
+      const container = document.getElementById('statistics-summary');
+      if (!container) return;
+
+      const m = txt.match(/setResponse\(([\s\S]*)\)/);
+      if (!m) throw new Error('No JSONP de estadisticas');
+
+      const table = JSON.parse(m[1]).table;
+      const headers = table.cols.map((col, i) => escapeHTML(col.label || col.id || `Dato ${i + 1}`));
+      const row = table.rows.find(item => item.c?.some(cell => {
+        const value = cell ? (cell.f ?? cell.v ?? '') : '';
+        return value !== '' && value !== null && value !== undefined;
+      }));
+
+      if (!row) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="statistics-table-frame">
+          <table class="compact statistics-table">
+            <colgroup>${headers.map(() => '<col>').join('')}</colgroup>
+            <thead>
+              <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+              <tr>${headers.map((header, i) => `<td data-label="${header}">${cellText(row.c?.[i])}</td>`).join('')}</tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    })
+    .catch(err => console.error('Error cargando estadisticas:', err));
 });
 </script>
 
